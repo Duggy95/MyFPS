@@ -12,6 +12,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class Launcher : MonoBehaviourPunCallbacks
 {
     public static Launcher Instance; // 인스턴스화
+
     public bool isStart = true;  // 게임 가능 여부
     public bool isGameStart = false;
     public GameObject unableStart;  // 게임 불가 시 출력되는 안내텍스트
@@ -38,7 +39,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     [SerializeField]
     Transform[] userInfoListContents;  // 유저 목록
 
-    Dictionary<string, GameObject> rooms = new Dictionary<string, GameObject>();
+    Dictionary<string, GameObject> rooms = new Dictionary<string, GameObject>();  // 방 목록 업데이트하기 위한 딕셔너리
 
     Image[] blueTeamList;  // 블루팀 목록
     Image[] redTeamList;  // 레드팀 목록
@@ -249,7 +250,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         isStart = true;
         Debug.Log("팀인원 : " + (teamListImg.Length - 3).ToString());
-        if (teamListImg.Length > 6)  // 팀의 인원을 초과한 경우
+        if (teamListImg.Length > 6 || teamListImg.Length < 3)  // 팀의 인원을 초과한 경우
         {
             isStart = false;
             Debug.Log("팀인원초과");
@@ -321,14 +322,14 @@ public class Launcher : MonoBehaviourPunCallbacks
 
         gameStart.gameObject.SetActive(false);
 
-        pv.RPC("TestSceneLoad", RpcTarget.All);
+        pv.RPC("BattleScene", RpcTarget.All);
         // 게임 씬 입장 추가
     }
 
     [PunRPC]
-    void TestSceneLoad()
+    void BattleScene()
     {
-        PhotonNetwork.LoadLevel("TestScene");
+        PhotonNetwork.LoadLevel("BattleScene");
     }
 
 
