@@ -66,6 +66,13 @@ public class LivingEntity : MonoBehaviourPun, IDamageable
         {
             OnMelee(meleeDamage);
         }
+
+        if(other.gameObject.CompareTag("GUN"))
+        {
+            Weapon weapon = other.gameObject.GetComponent<Weapon>();
+            WeaponManager.instance.AddWeapon(weapon);
+            Destroy(other.gameObject);
+        }
     }
 
     IEnumerator PlayerDie()

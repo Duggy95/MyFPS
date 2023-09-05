@@ -35,7 +35,7 @@ public class TestPhoton : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        player = PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity);
+        player = PhotonNetwork.Instantiate("Player", Vector3.up, Quaternion.identity);
         battleUIManager.PlayerFind();
         weaponManager.PlayerFind();
     }

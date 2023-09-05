@@ -13,12 +13,12 @@ public class BattleUIManager : MonoBehaviour
 
     void Start()
     {
-        weaponManager = GameObject.Find("WeaponManager").GetComponent<WeaponManager>();
+
     }
 
     void Update()
     {
-        if(player != null)
+        if(fireCtrl != null)
         {
             UIUpdate();
         }
@@ -27,7 +27,14 @@ public class BattleUIManager : MonoBehaviour
     void UIUpdate()
     {
         HPTxt.text = "HP : " + player.health;
-        ammoTxt.text = weaponManager.currWeapon.magAmmo + " / " + weaponManager.currWeapon.ammoRemain;      
+        if(fireCtrl.weapon != null)
+        {
+            ammoTxt.text = fireCtrl.weapon.magAmmo + " / " + fireCtrl.weapon.ammoRemain;
+        }
+        else
+        {
+            ammoTxt.text = "0 / 0";
+        }
     }
 
     public void PlayerFind()
