@@ -15,6 +15,7 @@ TagManager:
   - FIREPOS
   - KNIFE
   - GUN
+  - CROSSHAIR
   layers:
   - Default
   - TransparentFX

@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class PlayerGroundCheck : MonoBehaviour
 {
-    TestPlayerMovement playerMovement;
+    PlayerMovement playerMovement;
     void Awake()
     {
-        playerMovement = GetComponentInParent<TestPlayerMovement>();
+        playerMovement = GetComponentInParent<PlayerMovement>();
     }
 
     private void OnTriggerEnter(Collider other)

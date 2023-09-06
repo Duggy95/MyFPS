@@ -122,6 +122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b968129905b521f4a9901c4ea666522d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponName: 
   weaponType: 0
   ammoRemain: 0
   magAmmo: 0

@@ -8,13 +8,8 @@ public class BattleUIManager : MonoBehaviour
     public Text ammoTxt;
     public Text HPTxt;
     FireCtrl fireCtrl;
-    TestPlayerMovement player;
-    WeaponManager weaponManager;
-
-    void Start()
-    {
-
-    }
+    PlayerMovement player;
+    public TestPhoton testPhoton;
 
     void Update()
     {
@@ -24,7 +19,7 @@ public class BattleUIManager : MonoBehaviour
         }
     }
 
-    void UIUpdate()
+    void UIUpdate()  //UI 업데이트
     {
         HPTxt.text = "HP : " + player.health;
         if(fireCtrl.weapon != null)
@@ -37,9 +32,9 @@ public class BattleUIManager : MonoBehaviour
         }
     }
 
-    public void PlayerFind()
+    public void PlayerFind()  //플레이어 생성될때 정보 받아오기.
     {
-        fireCtrl = GameObject.FindWithTag("PLAYER").GetComponent<FireCtrl>();
-        player = fireCtrl.gameObject.GetComponent<TestPlayerMovement>();
+        fireCtrl = testPhoton.player.GetComponent<FireCtrl>();
+        player = testPhoton.player.GetComponent<PlayerMovement>();
     }
 }

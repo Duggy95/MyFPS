@@ -1,92 +1,101 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : LivingEntity, IPunObservable
 {
+    [SerializeField]
+    float walkSpeed;
+    [SerializeField]
+    float runSpeed;
+    [SerializeField]    
+    float jumpForce;
+    [SerializeField]
+    float smoothTime;
 
+    float damping = 10;
+    bool isGround;
     PlayerInput playerInput;
     Rigidbody rb;
-    Animator anim;
 
-    float moveSpeed = 5f;
-    float jumpPower = 8f;
-    bool isJumping = false;
+    Vector3 setPos;
+    Quaternion setRot;
 
-    readonly int hashSpeed = Animator.StringToHash("Speed");
-    readonly int hashWalk = Animator.StringToHash("Walk");
-    readonly int hashV = Animator.StringToHash("V");
-    readonly int hashH = Animator.StringToHash("H");
+    public PhotonView pv;
 
     private void Awake()
     {
-        playerInput = GetComponent<PlayerInput>();
-        rb = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>();
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Start()
     {
-        
+        if(!pv.IsMine)
+        {
+            Destroy(GetComponentInChildren<Camera>().gameObject);
+        }
+
+        playerInput = GetComponent<PlayerInput>();
+        rb = GetComponent<Rigidbody>();
     }
 
-    private void Update()
+    void Update()
     {
-        Jump();
-        anim.SetBool(hashWalk, playerInput.walk);
+        if(pv.IsMine)
+            Jump();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        Move();
+        if(pv.IsMine)
+        {
+            Move();
+        }
+        else
+        {
+            transform.position = Vector3.Lerp(transform.position, setPos, Time.deltaTime * damping);
+        }
     }
 
     void Move()
     {
-        if (playerInput.h == 0 && playerInput.v == 0)
-        {
-            moveSpeed = 0;
-        }
-        else
-        {
-            moveSpeed = 5;
-        }
-
-        if (playerInput.walk)
-        {
-            anim.SetFloat(hashV, playerInput.v);
-            anim.SetFloat(hashH, playerInput.h);
-            moveSpeed = 1;
-        }
-
         Vector3 moveDir = (transform.forward * playerInput.v) + (transform.right * playerInput.h);
-        Vector3 moveDis = moveDir.normalized * moveSpeed;
+        Vector3 moveDis = moveDir.normalized * (playerInput.walk?walkSpeed:runSpeed);
         rb.MovePosition(transform.position + moveDis * Time.deltaTime);
-        anim.SetFloat(hashSpeed, moveSpeed);
     }
 
     public void Rotate(float angle)
     {
-        /*float turn = playerInput.rotX * playerInput.rotY * rotSpeed * Time.deltaTime;
-        rb.rotation = rb.rotation * Quaternion.Euler(0f, turn, 0f);*/
         this.transform.rotation = Quaternion.Euler(0, angle, 0);
     }
 
     void Jump()
     {
-        if (isJumping && playerInput.jump)
+        if (playerInput.jump && isGround)
         {
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
-            isJumping = false;
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public void SetGround(bool ground)
     {
-        if (collision.gameObject.CompareTag("GROUND"))
+        isGround = ground;
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if(stream.IsWriting)
         {
-            isJumping = true;
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
+        }
+        else if(stream.IsReading)
+        {
+            setPos = (Vector3)stream.ReceiveNext();
+            setRot = (Quaternion)stream.ReceiveNext();
         }
     }
 }

@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 124a269fbc73bac498b2573351332b6f, type: 3}
-  m_Name: Rifle
+  m_Name: SyntaxRifle
   m_EditorClassIdentifier: 
-  gunName: Rifle
-  gunType: 1
-  damage: 5
+  gunName: SyntaxRifle
+  weaponType: 0
+  damage: 8
   distance: 800
   reloadTime: 1.5
-  magCapacity: 25
-  ammoRemain: 100
-  timeBetFire: 0.16
-  firePos: {fileID: 0}
-  gunPrefab: {fileID: 166328, guid: ab7f98e521cca3f4585f71f6873210ab, type: 3}
+  magCapacity: 30
+  ammoRemain: 120
+  timeBetFire: 0.2
+  gunPrefab: {fileID: 0}
+  weaponAnim: {fileID: 0}
   shotClip: {fileID: 0}
   reloadClip: {fileID: 0}

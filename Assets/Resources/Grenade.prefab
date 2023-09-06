@@ -146,6 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b968129905b521f4a9901c4ea666522d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponName: 
   weaponType: 3
   ammoRemain: 0
   magAmmo: 0
@@ -156,3 +157,4 @@ MonoBehaviour:
   damage: 100
   firePos: {fileID: 0}
   anim: {fileID: 0}
+  muzzleFlash: {fileID: 0}

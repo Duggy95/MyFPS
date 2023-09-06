@@ -1,43 +1,61 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraCtrl : MonoBehaviour
+public class CameraCtrl : MonoBehaviour, IPunObservable
 {
-    PlayerMovement playerMovement;
-    PlayerInput playerInput;
-    Transform chestSpine;
-    Transform upperchestSpine;
-    Animator anim;
+    PhotonView pv;
 
-    float eulerAngleX;
-    float eulerAngleY;
+    [SerializeField]
+    float mouseSensitivity;  //마우스 감도.
+    PlayerMovement player;
+    PlayerInput playerInput;
+    float eulerAngleX;  //마우스 좌우
+    float eulerAngleY;  //마우스 위아래
+    float damping = 10;
+    Quaternion setAngle;
 
     void Start()
     {
-        playerMovement = GetComponentInParent<PlayerMovement>();
+        pv = GetComponent<PhotonView>();
+        player = GetComponentInParent<PlayerMovement>();
         playerInput = GetComponentInParent<PlayerInput>();
-        anim = GetComponentInParent<Animator>();
-        chestSpine = anim.GetBoneTransform(HumanBodyBones.Chest);
-    }
-
-    private void Update()
-    {
     }
 
     void LateUpdate()
     {
-        eulerAngleY += playerInput.rotX;  //마우스 좌/우 이동으로 카메라 y축 회전
-        eulerAngleX -= playerInput.rotY;  //마우스 위/아래 이동으로 카메라 x축 회전
+        eulerAngleY += playerInput.rotX * mouseSensitivity;  //마우스 좌우
+        eulerAngleX += playerInput.rotY * mouseSensitivity;  //마우스 위아래
+        eulerAngleX = Mathf.Clamp(eulerAngleX, -90, 90);  //위아래 각도 90도씩 제한
 
-        eulerAngleX = Mathf.Clamp(eulerAngleX, -80, 80);
-        transform.rotation = Quaternion.Euler(eulerAngleX, eulerAngleY, 0);
-
-        upperchestSpine.localRotation = Quaternion.Euler(eulerAngleX+30, 0, 0);
+        if(pv.IsMine)
+        {
+            transform.localEulerAngles = Vector3.left * eulerAngleX;  //X축으로 카메라 각도 조정.
+        }
+        else
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, setAngle, Time.deltaTime * damping);
+        }
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
-        playerMovement.Rotate(eulerAngleY);
+        if(pv.IsMine)
+        {
+            player.Rotate(eulerAngleY);  //카메라의 회전값을 플레이어 한테 적용
+        } 
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if(stream.IsWriting)
+        {
+            stream.SendNext(transform.rotation);
+        }
+        else if(stream.IsReading)
+        {
+            setAngle = (Quaternion)stream.ReceiveNext();
+        }
     }
 }

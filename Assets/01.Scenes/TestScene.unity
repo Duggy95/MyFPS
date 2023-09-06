@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 210721919}
   m_Layer: 5
   m_Name: Crosshair
-  m_TagString: Untagged
+  m_TagString: CROSSHAIR
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -230,6 +230,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ammoTxt: {fileID: 916749159}
   HPTxt: {fileID: 1386716238}
+  testPhoton: {fileID: 1450352103}
 --- !u!4 &225759859
 Transform:
   m_ObjectHideFlags: 0
@@ -276,10 +277,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   datas:
-  - {fileID: 11400000, guid: 39aeba561f6339e499a9ad629f8a85b2, type: 2}
+  - {fileID: 11400000, guid: abe3ccb30e4bead45ac57629ce728d40, type: 2}
   - {fileID: 11400000, guid: 1c50510a2223c8a4db11ba02cacce64b, type: 2}
   - {fileID: 11400000, guid: f58895a2aacb48746836b42fed624718, type: 2}
   - {fileID: 11400000, guid: 4efd654efffd6a1458303d7519409c5d, type: 2}
+  - {fileID: 11400000, guid: 39aeba561f6339e499a9ad629f8a85b2, type: 2}
   weapons:
   - {fileID: 0}
   - {fileID: 0}
@@ -292,7 +294,6 @@ MonoBehaviour:
   - {fileID: 0}
   testPhoton: {fileID: 1450352103}
   currWeapon: {fileID: 0}
-  heavyGun: {fileID: 166328, guid: b261761c4bacbaf449a5edc9d8752696, type: 3}
 --- !u!4 &276188854
 Transform:
   m_ObjectHideFlags: 0

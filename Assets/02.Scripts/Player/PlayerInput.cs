@@ -77,7 +77,7 @@ public class PlayerInput : MonoBehaviourPun
                 weapon = 2;
             else if (grenade)
                 weapon = 3;
-            else
+            else  //아무것도 아닐 때
                 weapon = 10;
         }
     }
