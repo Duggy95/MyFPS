@@ -250,7 +250,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         isStart = true;
         Debug.Log("팀인원 : " + (teamListImg.Length - 3).ToString());
-        if (teamListImg.Length > 6 || teamListImg.Length < 3)  // 팀의 인원을 초과한 경우
+        if (teamListImg.Length > 6 || teamListImg.Length < 4)  // 팀의 인원을 초과한 경우
         {
             isStart = false;
             Debug.Log("팀인원초과");

@@ -17,9 +17,18 @@ public class BattleManager : MonoBehaviourPun
     public GameObject profileItem;  // 프로필
     public GameObject marketUI;  // 상점 UI
     public GameObject battleUI;  // 배틀 UI
+    public GameObject[] walls;  // 처음 게임이 시작되기 전 통로를 막아줄 벽 오브젝트
+    public GameObject battleReadyTxt;
+    public GameObject battleStartTxt;
     public Canvas canvas;  // 현재 캔버스
     public Text BattleTimeTxt;  // 배틀 시간 텍스트
+    public Text blueTeamScoreTxt;
+    public Text redTeamScoreTxt;
 
+    [HideInInspector]
+    public int redTeamScore;  // 레드팀 점수
+    [HideInInspector]
+    public int blueTeamScore;  // 블루팀 점수
     [HideInInspector]
     public string teamName;   // 블루인지 레드인지
     [HideInInspector]
@@ -30,9 +39,10 @@ public class BattleManager : MonoBehaviourPun
     Vector3 spawnDis;   // 스폰될 곳과의 거리
     List<Image> profiles = new List<Image>();
     Image myProfile;
-    float battleTime = 180f;  // 배틀 시간
-    float shopTime = 20f;  // 상점 이용 시간
+    float battleTime = 300f;  // 배틀 시간
     bool isGameStart;  // 게임 시작 여부
+    bool isGameOver;  // 게임 종료 여부
+    int victoryCount = 3; // 3승해야 게임 끝
 
     // 싱글톤 접근용 프로퍼티
     public static BattleManager instance
@@ -72,7 +82,6 @@ public class BattleManager : MonoBehaviourPun
                 teamName = "Red";
             }
         }
-
         // pv.RPC("MakeProfile", RpcTarget.All);
         MakeProfile();
         OpenMarket();
@@ -82,21 +91,8 @@ public class BattleManager : MonoBehaviourPun
     //[PunRPC]
     void MakeProfile()
     {
-        /*if (teamName == "Blue")
-        {
-            // 블루팀이면 블루팀 프로필 생성
-            // PhotonNetwork.Instantiate("PlayerImgPrefab", blueContent.transform.position, Quaternion.identity);
-            myProfile = Instantiate(profileItem, blueContent.transform).GetComponent<Image>();
-        }
-        else if (teamName == "Red")
-        {
-            // 레드팀이면 레드팀 프로필 생성
-            //PhotonNetwork.Instantiate("PlayerImgPrefab", redContent.transform.position, Quaternion.identity);
-            myProfile = Instantiate(profileItem, redContent.transform).GetComponent<Image>();
-        }*/
-
         Player[] players = PhotonNetwork.PlayerList;
-        for(int i = 0; i < players.Length; i++)
+        for (int i = 0; i < players.Length; i++)
         {
             if (players[i].CustomProperties.TryGetValue("NUMBER", out object numberValue))
             {
@@ -123,6 +119,8 @@ public class BattleManager : MonoBehaviourPun
             {
                 string name = (string)nameValue;
                 profiles[i].GetComponent<ProfileListItem>().userId = name;
+                profiles[i].GetComponentInChildren<Text>().text = name;
+                profiles[i].GetComponentInChildren<Text>().color = Color.white;
             }
         }
     }
@@ -170,13 +168,16 @@ public class BattleManager : MonoBehaviourPun
                     if ((string)readyValue == "True")
                     {
                         num++;
-                        for(int j = 0; j < profiles.Count; j++)
+                        for (int j = 0; j < profiles.Count; j++)
                         {
-                            if(players[i].CustomProperties.TryGetValue("NICKNAME", out object nameValue))
+                            if (players[i].CustomProperties.TryGetValue("NICKNAME", out object nameValue))
                             {
-                                if((string)nameValue == profiles[i].GetComponent<ProfileListItem>().userId)
+                                if ((string)nameValue == profiles[i].GetComponent<ProfileListItem>().userId)
                                 {
-                                    profiles[i].GetComponent<Image>().color = Color.white; 
+                                    // 프로필 UI 활성화 코드 작성
+                                    // 준비된 유저의 프로필은 흰색으로 텍스트는 검은 색으로
+                                    profiles[i].GetComponent<Image>().color = Color.white;
+                                    profiles[i].GetComponentInChildren<Text>().color = Color.black;
                                     break;
                                 }
                             }
@@ -187,12 +188,7 @@ public class BattleManager : MonoBehaviourPun
                 if (num == players.Length)
                 {
                     isGameStart = true;
-
-                    if (PhotonNetwork.IsMasterClient)
-                    {
-                        // 게임 시작 함수 호출
-                        pv.RPC("BattleStart", RpcTarget.All);
-                    }
+                    BattleReady();
                     break;
                 }
             }
@@ -210,15 +206,72 @@ public class BattleManager : MonoBehaviourPun
         ready["READY"] = "True";
         PhotonNetwork.LocalPlayer.SetCustomProperties(ready);
 
-        // 프로필 UI 활성화 코드 작성 - 투명화 조절이나 색감 조절 등을 통해 활성 비활성
-        myProfile.color = Color.white;
+        //myProfile.color = Color.white;
         MakePlayer();
+    }
+
+    void BattleReady()
+    {
+        StartCoroutine(BattleReadyAndStart());
+    }
+
+    IEnumerator BattleReadyAndStart()
+    {
+        battleReadyTxt.gameObject.SetActive(true);   // 배틀 준비
+
+        yield return new WaitForSeconds(2f);
+
+        battleReadyTxt.gameObject.SetActive(false);  // 2초 뒤 배틀 시작
+        battleStartTxt.gameObject.SetActive(true);
+
+        // 게임 시작 함수 호출
+        if (PhotonNetwork.IsMasterClient)
+            pv.RPC("BattleStart", RpcTarget.All);
+
+        yield return new WaitForSeconds(2f);
+
+        battleStartTxt.gameObject.SetActive(false);  
     }
 
     [PunRPC]
     void BattleStart()
     {
         // 배틀 시간 동작
+        StartCoroutine(BattleTimeCountDown());
+        StartCoroutine(BattleTimeUIUpdate());
+
+        // 통로 벽 없애기
+        foreach (GameObject wall in walls)
+        {
+            wall.SetActive(false);
+        }
     }
 
+    IEnumerator BattleTimeCountDown()
+    {
+        while (!isGameOver)
+        {
+            battleTime -= Time.deltaTime;  // 시간 카운트 다운
+            yield return null;
+        }
+    }
+
+    IEnumerator BattleTimeUIUpdate()
+    {
+        int min = 0;
+        int sec = 0;
+
+        while (!isGameOver)
+        {
+            min = (int)battleTime / 60;
+            sec = (int)battleTime % 60;
+
+            BattleTimeTxt.text = min + ":" + sec;  // 배틀 시간 UI 업데이트
+
+            if(sec < 10)
+                BattleTimeTxt.text = min + ":0" + sec;  // 배틀 시간 UI 업데이트
+
+            yield return null;
+        }
+    }
 }

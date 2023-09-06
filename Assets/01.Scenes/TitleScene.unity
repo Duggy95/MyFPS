@@ -2691,8 +2691,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\uD300 \uC778\uC6D0\uC774 \uCD08\uACFC\uB418\uC5C8\uC2B5\uB2C8\uB2E4.\n(1\uD300
-    \uB2F9 \uCD5C\uB300 3\uBA85)"
+  m_Text: "\uD300 \uBC30\uC815\uC5D0 \uBB38\uC81C\uAC00 \uC788\uC2B5\uB2C8\uB2E4.\n(1\uD300
+    \uB2F9 \uCD5C\uC18C 1\uBA85, \uCD5C\uB300 3\uBA85)"
 --- !u!222 &438113820
 CanvasRenderer:
   m_ObjectHideFlags: 0

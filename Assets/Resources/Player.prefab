@@ -462,10 +462,12 @@ MonoBehaviour:
   state: 0
   crossHair: {fileID: 0}
   meleePos: {fileID: 0}
-  mainWeapon: {fileID: 7771218907750846537}
-  subWeapon: {fileID: 5387736602111844280}
-  knifeWeapon: {fileID: 5257290516269995133}
-  grenadeWeapon: {fileID: 3502949116512241799}
+  poses:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  explodePrefab: {fileID: 0}
   weapon: {fileID: 0}
   grenadePrefab: {fileID: 0}
 --- !u!120 &7771218908077651533
@@ -728,6 +730,10 @@ PrefabInstance:
     - target: {fileID: 6597763391169047887, guid: 2d90b7d065ec80246938e378ff1a33d6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8756987816735651923, guid: 2d90b7d065ec80246938e378ff1a33d6, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2d90b7d065ec80246938e378ff1a33d6, type: 3}
