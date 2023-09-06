@@ -594,6 +594,8 @@ public class BuyGun : MonoBehaviour
                     Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
                     image2.sprite = image1.sprite;
 
+                    weaponchoose.SetActive(false);
+
                 }
                 else if (i == 2  && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
                 {
@@ -613,6 +615,8 @@ public class BuyGun : MonoBehaviour
 
                     Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
                     image2.sprite = image1.sprite;
+
+                    weaponchoose.SetActive(false);
                 }
                 else if (i == 3 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
                 {
@@ -632,6 +636,8 @@ public class BuyGun : MonoBehaviour
 
                     Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
                     image2.sprite = image1.sprite;
+
+                    weaponchoose.SetActive(false);
                 }
                 else if (i == 4 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
                 {
@@ -645,6 +651,8 @@ public class BuyGun : MonoBehaviour
 
                     Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
                     image2.sprite = image1.sprite;
+
+                    weaponchoose.SetActive(false);
                 }
                 else if (i == 5 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
                 {
@@ -658,6 +666,8 @@ public class BuyGun : MonoBehaviour
 
                     Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
                     image2.sprite = image1.sprite;
+
+                    weaponchoose.SetActive(false);
                 }
                 else if (i == 6 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
                 {
@@ -671,6 +681,8 @@ public class BuyGun : MonoBehaviour
 
                     Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
                     image2.sprite = image1.sprite;
+
+                    weaponchoose.SetActive(false);
                 }
                
             }
