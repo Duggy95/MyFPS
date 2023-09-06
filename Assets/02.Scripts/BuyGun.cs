@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,7 +21,13 @@ public class BuyGun : MonoBehaviour
     public GameObject Sniper;
     public GameObject weaponchoose;
 
+    public GameObject[] Shopguns = new GameObject[6];
+
+    Color originColor;
+
     public Image[] Greenimages = new Image[8];
+    public Sprite[] gunsprites = new Sprite[6];
+
     public Image grenadeimage;
     public Image vestImage;
     public Text remainningtime;
@@ -48,6 +55,9 @@ public class BuyGun : MonoBehaviour
     bool[] gunsbuy = new bool[8];
     float maxTime = 20;
 
+    
+    int Totalmoney;
+
     void Start()
     {
         remainningtime.text = "Buy Time Remaining : 00 : " + maxTime.ToString();
@@ -57,6 +67,11 @@ public class BuyGun : MonoBehaviour
             guncheck[i] = false;
             gunsbuy[i] = false;
         }
+
+        originColor = Greenimages[0].color;
+
+        
+        Totalmoney = int.Parse(MoneyText.text);
     }
 
     void Update()
@@ -200,8 +215,48 @@ public class BuyGun : MonoBehaviour
             if (gunsbuy[i])
             {
                 // 캐릭터가 총들고 있는거 바뀌어야함.
-                if (i == 0 && int.Parse(MoneyText.text) >= 100) // 건1
+                if (i == 0 && Totalmoney >= 100) // 건1
                 {
+                    for (int j = 0; j < 6; j++)  // 이 부분은 원래 보유중이었던 상품을 원래대로 되돌리는 역할을 해준다. 총들만 관련있음.
+                    {
+                        GameObject textobj = this.gameObject.transform.GetChild(j).GetChild(3).gameObject; // 보유중 텍스트
+
+                        if (textobj.activeSelf) // 보유중 글자가 있는지 없는지로 판단
+                        {
+                            if (j == 0 ^ j == 1 ^ j == 2)
+                            {
+                                Totalmoney += 100;
+                            }
+                            else
+                            {
+                                Totalmoney += 200;
+                            }
+
+                            textobj.SetActive(false);
+
+                            RotateGun rotategun1 = Shopguns[j].GetComponent<RotateGun>();
+                            rotategun1.enabled = true;                       
+
+                            Button buttons = Greenimages[j].GetComponent<Button>();
+                            buttons.enabled = true;
+
+                            Image image3 = Greenimages[j].GetComponent<Image>();
+
+                            Color b = image3.color;
+
+                            b.a = 0.4f;
+
+                            image3.color = b;
+
+                            image3.color = originColor;
+                            break;
+                        }
+
+                    }
+
+
+
+
                     EquipGun.transform.localScale = new Vector3(1, 1, 1);
                     EquipGun.transform.localRotation = Quaternion.Euler(95, -381, -376); // 회전값 맞춰주기
                     GunMesh.sharedMesh = Equipgun1; // 총 모양(메쉬값) 1로 설정
@@ -224,18 +279,57 @@ public class BuyGun : MonoBehaviour
 
                     Greenimages[i].GetComponent<Button>().enabled = false; // 보유중이면 다시 못사게 버튼 누르지 못하게 해주기
 
-                    Image image1 = weaponchoose.transform.GetChild(i).GetComponent<Image>();  // 좌측 하단 무기 고르는 곳 색깔 하얗게 해주려고함.
-                    Color color1 = image1.color;
+                    Totalmoney -= 100;
+                    MoneyText.text = Totalmoney.ToString();
 
-                    color1 = new Color(255, 255, 255, 255);
-                    image1.color = color1;
+                    Image aaa = weaponchoose.GetComponent<Image>();
+                    aaa.sprite = gunsprites[0];
 
-
-                    MoneyText.text = (int.Parse(MoneyText.text) - 100).ToString();
                     break;
                 }
-                else if (i == 1 && int.Parse(MoneyText.text) >= 100) //건2
+                else if (i == 1 && Totalmoney >= 100) //건2
                 {
+                    for (int j = 0; j < 6; j++)  // 이 부분은 원래 보유중이었던 상품을 원래대로 되돌리는 역할을 해준다. 총들만 관련있음.
+                    {
+                        GameObject textobj = this.gameObject.transform.GetChild(j).GetChild(3).gameObject;
+
+                        if (textobj.activeSelf)
+                        {
+                            if (j == 0 ^ j == 1 ^ j == 2)
+                            {
+                                Totalmoney += 100;
+                            }
+                            else
+                            {
+                                Totalmoney += 200;
+                            }
+
+
+                            textobj.SetActive(false);
+
+                            RotateGun rotategun1 = Shopguns[j].GetComponent<RotateGun>();
+                            rotategun1.enabled = true;
+
+                            Button buttons = Greenimages[j].GetComponent<Button>();
+                            buttons.enabled = true;
+
+                            Image image3 = Greenimages[j].GetComponent<Image>();
+
+                            Color b = image3.color;
+
+                            b.a = 0.4f;
+
+                            image3.color = b;
+
+                            image3.color = originColor;
+                            break;
+                        }
+
+                    }
+
+
+
+
                     EquipGun.transform.localScale = new Vector3(1, 1, 1);
                     EquipGun.transform.localRotation = Quaternion.Euler(-7, -359, -352);
                     GunMesh.sharedMesh = Equipgun2;  // 총 모양(메쉬값) 2로 설정
@@ -247,7 +341,7 @@ public class BuyGun : MonoBehaviour
                     a.a = 0;
                     Greenimages[i].color = a;
 
-                    GameObject ownText = Greenimages[i].transform.GetChild(3).gameObject;
+                        GameObject ownText = Greenimages[i].transform.GetChild(3).gameObject;
                     ownText.SetActive(true);
 
                     RotateGun rotategun = gun2.GetComponent<RotateGun>();
@@ -256,21 +350,66 @@ public class BuyGun : MonoBehaviour
 
                     rotategun.enabled = false;
 
-                    Greenimages[i].GetComponent<Button>().enabled = false; // 보유중이면 다시 못사게 버튼 누르지 못하게 해주기
+                    //Greenimages[i].GetComponent<Button>().enabled = false; // 보유중이면 다시 못사게 버튼 누르지 못하게 해주기
 
-                    Image image1 = weaponchoose.transform.GetChild(i).GetComponent<Image>();
-                    Color color1 = image1.color;
+                    //Image image1 = weaponchoose.transform.GetChild(i).GetComponent<Image>();
+                    //Color color1 = image1.color;
 
-                    color1 = new Color(255, 255, 255, 255);
-                    image1.color = color1;
+                    //color1 = new Color(255, 255, 255, 255);
+                    //image1.color = color1;
 
-                    MoneyText.text = (int.Parse(MoneyText.text) - 100).ToString();
+                    Totalmoney -= 100;
+                    MoneyText.text = Totalmoney.ToString();
+
+                    Image aaa = weaponchoose.GetComponent<Image>();
+                    aaa.sprite = gunsprites[1];
 
                     break;
 
                 }
-                else if (i == 2 && int.Parse(MoneyText.text) >= 100) // 건3
+                else if (i == 2 && Totalmoney >= 100) // 건3
                 {
+                    for (int j = 0; j < 6; j++)  // 이 부분은 원래 보유중이었던 상품을 원래대로 되돌리는 역할을 해준다. 총들만 관련있음.
+                    {
+                        GameObject textobj = this.gameObject.transform.GetChild(j).GetChild(3).gameObject;
+
+                        if (textobj.activeSelf)
+                        {
+                            if (j == 0 ^ j == 1 ^ j == 2)
+                            {
+                                Totalmoney += 100;
+                            }
+                            else
+                            {
+                                Totalmoney += 200;
+                            }
+
+                            textobj.SetActive(false);
+
+                            RotateGun rotategun1 = Shopguns[j].GetComponent<RotateGun>();
+                            rotategun1.enabled = true;
+
+                            Button buttons = Greenimages[j].GetComponent<Button>();
+                            buttons.enabled = true;
+
+                            Image image3 = Greenimages[j].GetComponent<Image>();
+
+                            Color b = image3.color;
+
+                            b.a = 0.4f;
+
+                            image3.color = b;
+
+                            image3.color = originColor;
+
+                            Image aaaa = weaponchoose.GetComponent<Image>();
+                            aaaa.sprite = gunsprites[2];
+
+                            break;
+                        }
+
+                    }
+
                     EquipGun.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                     EquipGun.transform.localRotation = Quaternion.Euler(172.263f, -178.481f, -180.989f);
                     GunMesh.sharedMesh = Equipgun3;  // 총 모양(메쉬값) 3로 설정
@@ -287,24 +426,61 @@ public class BuyGun : MonoBehaviour
 
                     RotateGun rotategun = gun3.GetComponent<RotateGun>();
 
-                    gun3.transform.localRotation = Quaternion.Euler(0, -90, 0);
+                    gun3.transform.localRotation = Quaternion.Euler(-86, -90, 0);
 
                     rotategun.enabled = false;
 
                     Greenimages[i].GetComponent<Button>().enabled = false; // 보유중이면 다시 못사게 버튼 누르지 못하게 해주기
 
-                    Image image1 = weaponchoose.transform.GetChild(i).GetComponent<Image>();  // 좌측 하단 무기 고르는 곳 색깔 하얗게 해주려고함.
-                    Color color1 = image1.color;
-
-                    color1 = new Color(255, 255, 255, 255);
-                    image1.color = color1;
-
-                    MoneyText.text = (int.Parse(MoneyText.text) - 100).ToString();
+                    Totalmoney -= 100;
+                    MoneyText.text = Totalmoney.ToString();
+                    Image aaa = weaponchoose.GetComponent<Image>();
+                    aaa.sprite = gunsprites[2];
 
                     break;
                 }
-                else if (i == 3 && int.Parse(MoneyText.text) >= 200) // 샷건
+                else if (i == 3 && Totalmoney >= 200) // 샷건
                 {
+                    for (int j = 0; j < 6; j++)  // 이 부분은 원래 보유중이었던 상품을 원래대로 되돌리는 역할을 해준다. 총들만 관련있음.
+                    {
+                        GameObject textobj = this.gameObject.transform.GetChild(j).GetChild(3).gameObject;
+
+                        if (textobj.activeSelf)
+                        {
+                            if (j == 0 ^ j == 1 ^ j == 2 )
+                            {
+                                Totalmoney += 100;
+                            }
+                            else
+                            {
+                                Totalmoney += 200;
+                            }
+                            
+
+
+                            textobj.SetActive(false);
+
+                            RotateGun rotategun1 = Shopguns[j].GetComponent<RotateGun>();
+                            rotategun1.enabled = true;
+
+                            Button buttons = Greenimages[j].GetComponent<Button>();
+                            buttons.enabled = true;
+
+                            Image image3 = Greenimages[j].GetComponent<Image>();
+
+                            Color b = image3.color;
+
+                            b.a = 0.4f;
+
+                            image3.color = b;
+
+                            image3.color = originColor;
+                            break;
+                        }
+
+                    }
+
+
                     Color a = Greenimages[i].color;
 
                     a.a = 0;
@@ -321,18 +497,52 @@ public class BuyGun : MonoBehaviour
 
                     Greenimages[i].GetComponent<Button>().enabled = false; // 보유중이면 다시 못사게 버튼 누르지 못하게 해주기
 
-                    Image image1 = weaponchoose.transform.GetChild(i).GetComponent<Image>();  // 좌측 하단 무기 고르는 곳 색깔 하얗게 해주려고함.
-                    Color color1 = image1.color;
-
-                    color1 = new Color(255, 255, 255, 255);
-                    image1.color = color1;
-
-                    MoneyText.text = (int.Parse(MoneyText.text) - 200).ToString();
+                    Totalmoney -= 200;
+                    MoneyText.text = Totalmoney.ToString();
+                    Image aaa = weaponchoose.GetComponent<Image>();
+                    aaa.sprite = gunsprites[3];
 
                     break;
                 }
-                else if (i == 4 && int.Parse(MoneyText.text) >= 200) // camo
+                else if (i == 4 && Totalmoney >= 200) // camo
                 {
+                    for (int j = 0; j < 6; j++)  // 이 부분은 원래 보유중이었던 상품을 원래대로 되돌리는 역할을 해준다. 총들만 관련있음.
+                    {
+                        GameObject textobj = this.gameObject.transform.GetChild(j).GetChild(3).gameObject;
+
+                        if (textobj.activeSelf)
+                        {
+                            if (j == 0 ^ j == 1 ^ j == 2)
+                            {
+                                Totalmoney += 100;
+                            }
+                            else
+                            {
+                                Totalmoney += 200;
+                            }
+
+                            textobj.SetActive(false);
+
+                            RotateGun rotategun1 = Shopguns[j].GetComponent<RotateGun>();
+                            rotategun1.enabled = true;
+
+                            Button buttons = Greenimages[j].GetComponent<Button>();
+                            buttons.enabled = true;
+
+                            Image image3 = Greenimages[j].GetComponent<Image>();
+
+                            Color b = image3.color;
+
+                            b.a = 0.4f;
+
+                            image3.color = b;
+
+                            image3.color = originColor;
+                            break;
+                        }
+
+                    }
+
                     Color a = Greenimages[i].color;
 
                     a.a = 0;
@@ -349,45 +559,79 @@ public class BuyGun : MonoBehaviour
 
                     Greenimages[i].GetComponent<Button>().enabled = false; // 보유중이면 다시 못사게 버튼 누르지 못하게 해주기
 
-                    Image image1 = weaponchoose.transform.GetChild(i).GetComponent<Image>();  // 좌측 하단 무기 고르는 곳 색깔 하얗게 해주려고함.
-                    Color color1 = image1.color;
-
-                    color1 = new Color(255, 255, 255, 255);
-                    image1.color = color1;
-
-                    MoneyText.text = (int.Parse(MoneyText.text) - 200).ToString();
+                    Totalmoney -= 200;
+                    MoneyText.text = Totalmoney.ToString();
+                    Image aaa = weaponchoose.GetComponent<Image>();
+                    aaa.sprite = gunsprites[4];
 
                     break;
                 }
-                else if (i == 5 && int.Parse(MoneyText.text) >= 200) // 고급 스나
+                else if (i == 5 && Totalmoney >= 200) // 고급 스나
                 {
+                    for (int j = 0; j < 6; j++)  // 이 부분은 원래 보유중이었던 상품을 원래대로 되돌리는 역할을 해준다. 총들만 관련있음.
+                    {
+                        GameObject textobj = this.gameObject.transform.GetChild(j).GetChild(3).gameObject;
+
+                        if (textobj.activeSelf)
+                        {
+                            if (j == 0 ^ j == 1 ^ j == 2)
+                            {
+                                Totalmoney += 100;
+                            }
+                            else
+                            {
+                                Totalmoney += 200;
+                            }
+
+                            textobj.SetActive(false);
+
+                            RotateGun rotategun1 = Shopguns[j].GetComponent<RotateGun>();
+                            rotategun1.enabled = true;
+
+                            Button buttons = Greenimages[j].GetComponent<Button>();
+                            buttons.enabled = true;
+
+                            Image image3 = Greenimages[j].GetComponent<Image>();
+
+                            Color b = image3.color;
+
+                            b.a = 0.4f;
+
+                            image3.color = b;
+
+                            image3.color = originColor;
+                            Image aaaa = weaponchoose.GetComponent<Image>();
+                            aaaa.sprite = gunsprites[0];
+                            break;
+                        }
+
+                    }
                     Color a = Greenimages[i].color;
 
                     a.a = 0;
                     Greenimages[i].color = a;
-
+                    
                     GameObject ownText = Greenimages[i].transform.GetChild(3).gameObject;
                     ownText.SetActive(true);
 
                     RotateGun rotategun = gun6.GetComponent<RotateGun>();
 
-                    gun6.transform.localRotation = Quaternion.Euler(0, 280, 0);
+                    gun6.transform.localRotation = Quaternion.Euler(0, 180, 0);
 
                     rotategun.enabled = false;
 
                     Greenimages[i].GetComponent<Button>().enabled = false; // 보유중이면 다시 못사게 버튼 누르지 못하게 해주기
 
-                    MoneyText.text = (int.Parse(MoneyText.text) - 200).ToString();
 
-                    Image image1 = weaponchoose.transform.GetChild(i).GetComponent<Image>();  // 좌측 하단 무기 고르는 곳 색깔 하얗게 해주려고함.
-                    Color color1 = image1.color;
+                    Totalmoney -= 200;
+                    MoneyText.text = Totalmoney.ToString();
 
-                    color1 = new Color(255, 255, 255, 255);
-                    image1.color = color1;
+                    Image aaa = weaponchoose.GetComponent<Image>();
+                    aaa.sprite = gunsprites[5];
 
                     break;
                 }
-                else if (i == 6 && int.Parse(MoneyText.text) >= 50) // 수류탄
+                else if (i == 6 && Totalmoney >= 50) // 수류탄
                 {
                     grenade.SetActive(true);
                     // 수류탄 수 증가 시켜줘야함 게임매니저로 관리하면 좋을거 같음.
@@ -402,7 +646,8 @@ public class BuyGun : MonoBehaviour
 
                     Greenimages[i].GetComponent<Button>().enabled = false; // 보유중이면 다시 못사게 버튼 누르지 못하게 해주기
 
-                    MoneyText.text = (int.Parse(MoneyText.text) - 50).ToString();
+                    Totalmoney -= 50;
+                    MoneyText.text = Totalmoney.ToString();
 
                     Color b = grenadeimage.color;
 
@@ -411,7 +656,7 @@ public class BuyGun : MonoBehaviour
 
                     break;
                 }
-                else if (i == 7 && int.Parse(MoneyText.text) >= 100)
+                else if (i == 7 && Totalmoney >= 100)
                 {
                     Head.material = HeadArmor;
                     Torso.material = TorsoArmor;
@@ -422,12 +667,13 @@ public class BuyGun : MonoBehaviour
                     a.a = 0;
                     Greenimages[i].color = a;
 
-                    GameObject ownText = Greenimages[i].transform.GetChild(3).gameObject;
+                    GameObject ownText = Greenimages[i].transform.GetChild(4).gameObject;
                     ownText.SetActive(true);
 
                     Greenimages[i].GetComponent<Button>().enabled = false; // 보유중이면 다시 못사게 버튼 누르지 못하게 해주기
 
-                    MoneyText.text = (int.Parse(MoneyText.text) - 100).ToString();
+                    Totalmoney -= 100;
+                    MoneyText.text = Totalmoney.ToString();
 
                     Color b = vestImage.color;
 
@@ -436,7 +682,7 @@ public class BuyGun : MonoBehaviour
 
                     break;
                 }
-                MoneyText.text = (int.Parse(MoneyText.text) - (i + 1) * 100).ToString(); // 원래 가지고 있는 돈에서 차감함.
+                
             }
             else if (int.Parse(MoneyText.text) < (i + 1) * 100)
             {
@@ -486,115 +732,115 @@ public class BuyGun : MonoBehaviour
         }
     }
 
-    public void Choosing()
-    {
-        choose = true;
+    //public void Choosing()
+    //{
+    //    choose = true;
 
-        Debug.Log(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject);
+    //    Debug.Log(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject);
 
-        for (int i = 1; i <= 6; i++)
-        {
-            if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name == "ChooseMainWeapon" + i.ToString())
-            {
-                if (i == 1 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
-                {
-                    WeaponRifle.SetActive(true);
-                    Shotgun.SetActive(false);
-                    Camo.SetActive(false);
-                    Sniper.SetActive(false);
+    //    for (int i = 1; i <= 6; i++)
+    //    {
+    //        if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name == "ChooseMainWeapon" + i.ToString())
+    //        {
+    //            if (i == 1 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
+    //            {
+    //                WeaponRifle.SetActive(true);
+    //                Shotgun.SetActive(false);
+    //                Camo.SetActive(false);
+    //                Sniper.SetActive(false);
 
-                    EquipGun.transform.localScale = new Vector3(1, 1, 1);
-                    EquipGun.transform.localRotation = Quaternion.Euler(95, -381, -376); // 회전값 맞춰주기
-                    GunMesh.sharedMesh = Equipgun1; // 총 모양(메쉬값) 1로 설정
-                                                    //   gunShader.mainTexture = GunShader1;
-                    GunMesh.material = GunShader1;  // 메터리얼도 총 종류에 맞는 메터리얼로 정해줌.
+    //                EquipGun.transform.localScale = new Vector3(1, 1, 1);
+    //                EquipGun.transform.localRotation = Quaternion.Euler(95, -381, -376); // 회전값 맞춰주기
+    //                GunMesh.sharedMesh = Equipgun1; // 총 모양(메쉬값) 1로 설정
+    //                                                //   gunShader.mainTexture = GunShader1;
+    //                GunMesh.material = GunShader1;  // 메터리얼도 총 종류에 맞는 메터리얼로 정해줌.
 
-                    Image image1 = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>(); // 고른 무기 이미지를 이것과 동일하게 한다.
+    //                Image image1 = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>(); // 고른 무기 이미지를 이것과 동일하게 한다.
 
-                    Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
-                    image2.sprite = image1.sprite;
+    //                Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
+    //                image2.sprite = image1.sprite;
 
-                    weaponchoose.SetActive(false);
-                }
-                else if (i == 2 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
-                {
-                    WeaponRifle.SetActive(true);
-                    Shotgun.SetActive(false);
-                    Camo.SetActive(false);
-                    Sniper.SetActive(false);
+    //                weaponchoose.SetActive(false);
+    //            }
+    //            else if (i == 2 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
+    //            {
+    //                WeaponRifle.SetActive(true);
+    //                Shotgun.SetActive(false);
+    //                Camo.SetActive(false);
+    //                Sniper.SetActive(false);
 
-                    EquipGun.transform.localScale = new Vector3(1, 1, 1);
-                    EquipGun.transform.localRotation = Quaternion.Euler(-7, -359, -352);
-                    GunMesh.sharedMesh = Equipgun2;  // 총 모양(메쉬값) 2로 설정
+    //                EquipGun.transform.localScale = new Vector3(1, 1, 1);
+    //                EquipGun.transform.localRotation = Quaternion.Euler(-7, -359, -352);
+    //                GunMesh.sharedMesh = Equipgun2;  // 총 모양(메쉬값) 2로 설정
 
-                    GunMesh.material = GunShader2;
+    //                GunMesh.material = GunShader2;
 
-                    Image image1 = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>(); // 고른 무기 이미지를 이것과 동일하게 한다.
+    //                Image image1 = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>(); // 고른 무기 이미지를 이것과 동일하게 한다.
 
-                    Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
-                    image2.sprite = image1.sprite;
+    //                Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
+    //                image2.sprite = image1.sprite;
 
-                    weaponchoose.SetActive(false);
-                }
-                else if (i == 3 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
-                {
-                    WeaponRifle.SetActive(true);
-                    Shotgun.SetActive(false);
-                    Camo.SetActive(false);
-                    Sniper.SetActive(false);
+    //                weaponchoose.SetActive(false);
+    //            }
+    //            else if (i == 3 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
+    //            {
+    //                WeaponRifle.SetActive(true);
+    //                Shotgun.SetActive(false);
+    //                Camo.SetActive(false);
+    //                Sniper.SetActive(false);
 
-                    EquipGun.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                    EquipGun.transform.localRotation = Quaternion.Euler(172.263f, -178.481f, -180.989f);
-                    GunMesh.sharedMesh = Equipgun3;  // 총 모양(메쉬값) 3로 설정
-                    GunMesh.material = GunShader3;
+    //                EquipGun.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+    //                EquipGun.transform.localRotation = Quaternion.Euler(172.263f, -178.481f, -180.989f);
+    //                GunMesh.sharedMesh = Equipgun3;  // 총 모양(메쉬값) 3로 설정
+    //                GunMesh.material = GunShader3;
 
-                    Image image1 = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>(); // 고른 무기 이미지를 이것과 동일하게 한다.
-                    Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
-                    image2.sprite = image1.sprite;
+    //                Image image1 = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>(); // 고른 무기 이미지를 이것과 동일하게 한다.
+    //                Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
+    //                image2.sprite = image1.sprite;
 
-                    weaponchoose.SetActive(false);
-                }
-                else if (i == 4 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
-                {
-                    WeaponRifle.SetActive(false);
-                    Camo.SetActive(false);
-                    Sniper.SetActive(false);
+    //                weaponchoose.SetActive(false);
+    //            }
+    //            else if (i == 4 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
+    //            {
+    //                WeaponRifle.SetActive(false);
+    //                Camo.SetActive(false);
+    //                Sniper.SetActive(false);
 
-                    Shotgun.SetActive(true);
+    //                Shotgun.SetActive(true);
 
-                    Image image1 = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>(); // 고른 무기 이미지를 이것과 동일하게 한다.
-                    Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
-                    image2.sprite = image1.sprite;
+    //                Image image1 = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>(); // 고른 무기 이미지를 이것과 동일하게 한다.
+    //                Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
+    //                image2.sprite = image1.sprite;
 
-                    weaponchoose.SetActive(false);
-                }
-                else if (i == 5 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
-                {
-                    WeaponRifle.SetActive(false);
-                    Shotgun.SetActive(false);
-                    Sniper.SetActive(false);
-                    Camo.SetActive(true);
+    //                weaponchoose.SetActive(false);
+    //            }
+    //            else if (i == 5 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
+    //            {
+    //                WeaponRifle.SetActive(false);
+    //                Shotgun.SetActive(false);
+    //                Sniper.SetActive(false);
+    //                Camo.SetActive(true);
 
-                    Image image1 = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>(); // 고른 무기 이미지를 이것과 동일하게 한다.
-                    Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
-                    image2.sprite = image1.sprite;
+    //                Image image1 = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>(); // 고른 무기 이미지를 이것과 동일하게 한다.
+    //                Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
+    //                image2.sprite = image1.sprite;
 
-                    weaponchoose.SetActive(false);
-                }
-                else if (i == 6 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
-                {
-                    WeaponRifle.SetActive(false);
-                    Shotgun.SetActive(false);
-                    Camo.SetActive(false);
-                    Sniper.SetActive(true);
+    //                weaponchoose.SetActive(false);
+    //            }
+    //            else if (i == 6 && Greenimages[i - 1].transform.GetChild(3).gameObject.activeSelf)
+    //            {
+    //                WeaponRifle.SetActive(false);
+    //                Shotgun.SetActive(false);
+    //                Camo.SetActive(false);
+    //                Sniper.SetActive(true);
 
-                    Image image1 = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>(); // 고른 무기 이미지를 이것과 동일하게 한다.
-                    Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
-                    image2.sprite = image1.sprite;
+    //                Image image1 = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>(); // 고른 무기 이미지를 이것과 동일하게 한다.
+    //                Image image2 = weaponchoose.transform.parent.GetComponent<Image>();
+    //                image2.sprite = image1.sprite;
 
-                    weaponchoose.SetActive(false);
-                }
-            }
-        }
-    }
+    //                weaponchoose.SetActive(false);
+    //            }
+    //        }
+    //    }
+    //}
 }
