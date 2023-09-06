@@ -89,7 +89,7 @@ public class BuyGun : MonoBehaviour
         }
         if (0 >= maxTime)
         {
-            CloseMarket();
+            //CloseMarket();
         }
 
         if (choose)
@@ -99,6 +99,27 @@ public class BuyGun : MonoBehaviour
             {
                 weaponchoose.SetActive(false);
                 choose = false;
+            }
+        }
+
+        if(BuyCheckUI.activeSelf)
+        {
+            Shopguns[4].layer = 0;  ///ui의 레이어 바꾸기
+            Transform[] allTransforms = Shopguns[4].GetComponentsInChildren<Transform>(true);
+
+            foreach (Transform childTransform in allTransforms)
+            {
+                childTransform.gameObject.layer = 0;
+            }
+        }
+        else
+        {
+            Shopguns[4].layer = 6;  // ui의 레이어 바꾸기
+            Transform[] allTransforms = Shopguns[4].GetComponentsInChildren<Transform>(true);
+
+            foreach (Transform childTransform in allTransforms)
+            {
+                childTransform.gameObject.layer = 6;
             }
         }
     }
