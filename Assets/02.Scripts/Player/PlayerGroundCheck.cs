@@ -13,7 +13,7 @@ public class PlayerGroundCheck : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == playerMovement.gameObject)
+        if (other.gameObject == playerMovement.gameObject)  
             return;
         playerMovement.SetGround(true);
     }
