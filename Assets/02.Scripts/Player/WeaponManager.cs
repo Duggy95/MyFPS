@@ -14,10 +14,12 @@ public class WeaponManager : MonoBehaviourPun
     public GunData[] datas = new GunData[4];  //무기 데이터들
     public Weapon[] weapons = new Weapon[4];  //내가 가지고 있는 무기들. 0 = 주무기, 1 = 보조무기, 2 = 나이프, 3 = 수류탄.
     public Transform[] poses = new Transform[4];  //내가 무기를 가져야 할 위치들. 0 = 주무기, 1 = 보조무기, 2 = 나이프, 3 = 수류탄
+    public PhotonView[] photonViews = new PhotonView[4];
     PlayerInput playerInput;  //플레이어 입력
     FireCtrl fireCtrl;  //플레이어가 가지고 있는 발사기능
     public TestPhoton testPhoton;
     public Weapon currWeapon;  //현재 무기
+    PhotonView pv;
     Vector3 throwDirection = new Vector3(0, 1, 0);  //던지는 방향
 
     public static WeaponManager instance  //WeaponManager타입의 변수 instance는 아래 코드대로 _instance를 반환하는 스태틱 매서드 역할.
@@ -35,7 +37,6 @@ public class WeaponManager : MonoBehaviourPun
         }
     }
 
-
     private void Awake()
     {
         // 씬에 싱글톤 오브젝트가 된 다른 GameManager 오브젝트가 있다면
@@ -44,6 +45,8 @@ public class WeaponManager : MonoBehaviourPun
             // 자신을 파괴
             Destroy(gameObject);
         }
+
+        pv = GetComponent<PhotonView>();
     }
 
     void Update()
@@ -55,19 +58,19 @@ public class WeaponManager : MonoBehaviourPun
                 //받은 입력에 따라 무기를 바꿈.
                 case 0:
                     SwitchWeapon(0);
-                    photonView.RPC("SwitchWeapon", RpcTarget.All, 0);
+                    //pv.RPC("SwitchWeapon", RpcTarget.Others, 0);
                     break;
                 case 1:
                     SwitchWeapon(1);
-                    photonView.RPC("SwitchWeapon", RpcTarget.All, 1);
+                    //pv.RPC("SwitchWeapon", RpcTarget.Others, 1);
                     break;
                 case 2:
                     SwitchWeapon(2);
-                    photonView.RPC("SwitchWeapon", RpcTarget.All, 2);
+                    //pv.RPC("SwitchWeapon", RpcTarget.Others, 2);
                     break;
                 case 3:
                     SwitchWeapon(3);
-                    photonView.RPC("SwitchWeapon", RpcTarget.All, 3);
+                    //pv.RPC("SwitchWeapon", RpcTarget.Others, 3);
                     break;
             }
 
@@ -75,7 +78,58 @@ public class WeaponManager : MonoBehaviourPun
         }
     }
 
+    public void Switch(int i)
+    {
+        pv.RPC("SwichRPC", RpcTarget.All, i);
+    }
+
+    [PunRPC]
+    void SwichRPC(int i)
+    {
+        switch (i)  //플레이어 입력을 받아서 
+        {
+            //받은 입력에 따라 무기를 바꿈.
+            case 0:
+                SwitchWeapon(0);
+                //pv.RPC("SwitchWeapon", RpcTarget.Others, 0);
+                break;
+            case 1:
+                SwitchWeapon(1);
+                //pv.RPC("SwitchWeapon", RpcTarget.Others, 1);
+                break;
+            case 2:
+                SwitchWeapon(2);
+                //pv.RPC("SwitchWeapon", RpcTarget.Others, 2);
+                break;
+            case 3:
+                SwitchWeapon(3);
+                //pv.RPC("SwitchWeapon", RpcTarget.Others, 3);
+                break;
+        }
+
+        StateCheck(currWeapon);
+    }
+
     public void PlayerFind()  //맨 처음 플레이어 생성되었을 때 호출되는 메서드
+    {
+        /*playerInput = testPhoton.player.GetComponent<PlayerInput>();
+        fireCtrl = testPhoton.player.GetComponent<FireCtrl>();
+        poses = fireCtrl.poses; //플레이어가 가지고 있는 무기 위치들 받아옴.
+        for (int i = 0; i < poses.Length; i++)
+        {
+            //무기 위치들의 자식에 무기로부터 무기가져와서 배열에 넣어줌. 무기를 안들고 있으면 null값 들어갈 것임.
+            weapons[i] = poses[i].GetComponentInChildren<Weapon>();
+            //photonViews[i] = poses[i].GetComponent<PhotonView>();
+        }
+
+        Setting();  //초기 무기값 세팅.
+        SwitchWeapon(1);  //보조무기 활성화.*/
+        //photonView.RPC("SwitchWeapon", RpcTarget.Others, 1);
+        pv.RPC("PvPlayerFind", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void PvPlayerFind()
     {
         playerInput = testPhoton.player.GetComponent<PlayerInput>();
         fireCtrl = testPhoton.player.GetComponent<FireCtrl>();
@@ -84,11 +138,11 @@ public class WeaponManager : MonoBehaviourPun
         {
             //무기 위치들의 자식에 무기로부터 무기가져와서 배열에 넣어줌. 무기를 안들고 있으면 null값 들어갈 것임.
             weapons[i] = poses[i].GetComponentInChildren<Weapon>();
+            //photonViews[i] = poses[i].GetComponent<PhotonView>();
         }
 
         Setting();  //초기 무기값 세팅.
         SwitchWeapon(1);  //보조무기 활성화.
-        photonView.RPC("SwitchWeapon", RpcTarget.Others, 1);
     }
 
     void Setting()
@@ -107,7 +161,6 @@ public class WeaponManager : MonoBehaviourPun
         }
     }
 
-    [PunRPC]
     void SwitchWeapon(int weaponIndex)  //현재 무기 바꾸는 메서드.
     {
         if (weapons[weaponIndex] == null)
@@ -178,7 +231,7 @@ public class WeaponManager : MonoBehaviourPun
 
         gun.transform.SetParent(poses[gunData.weaponType]);
         gun.transform.localPosition = Vector3.zero;
-        gun.transform.localEulerAngles= Vector3.zero;
+        gun.transform.localEulerAngles = Vector3.zero;
 
         Weapon _weapon = gun.GetComponent<Weapon>();
         _weapon.SetWeapon(gunData);

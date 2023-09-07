@@ -59,6 +59,8 @@ MonoBehaviour:
   - MakeProfile
   - CheckUser
   - ImReady
+  - PvPlayerFind
+  - SwichRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

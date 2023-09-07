@@ -40,8 +40,6 @@ public class FireCtrl : MonoBehaviourPun
     bool isCharge = false;
     float explosionRadius = 5;  //수류탄 범위
 
-    
-
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
