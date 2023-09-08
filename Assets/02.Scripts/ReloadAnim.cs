@@ -1,8 +1,9 @@
-using Autodesk.Fbx;
+//using Autodesk.Fbx;
 using ExitGames.Client.Photon;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Animations;
+
+//using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -33,10 +34,10 @@ public class ReloadAnim : MonoBehaviour
     public GameObject Grip;
     public GameObject PistolGrip;
 
-    public AnimatorController mainanim;
-    public AnimatorController pistolanim;
-    public AnimatorController knifeanim;
-    public AnimatorController grenadeanim;
+    public RuntimeAnimatorController mainanim;
+    public RuntimeAnimatorController pistolanim;
+    public RuntimeAnimatorController knifeanim;
+    public RuntimeAnimatorController grenadeanim;
 
     bool pistolreload = false;
     bool mainreload = false;
@@ -52,7 +53,7 @@ public class ReloadAnim : MonoBehaviour
     Vector3 recoilBack;
     Vector3 pistolPos; // 권총 무기 원위치 포지션
 
-    
+
     Quaternion originrot; // 권총 원래 로테이션
 
     // Start is called before the first frame update
@@ -131,22 +132,22 @@ public class ReloadAnim : MonoBehaviour
 
             if (Input.GetMouseButton(0) && shoot)
             {
-                
-                    Shot();
-                
-                
+
+                Shot();
+
+
 
             }
         }
-        else if(Pistol.activeSelf)
+        else if (Pistol.activeSelf)
         {
-            if(Input.GetMouseButtonDown(0) && shoot)
+            if (Input.GetMouseButtonDown(0) && shoot)
             {
                 StartCoroutine(Pistolaa());
 
             }
         }
-        
+
 
 
         if (Knife.activeSelf)
@@ -176,7 +177,7 @@ public class ReloadAnim : MonoBehaviour
 
     private void Shot()
     {
-        
+
         StartCoroutine(aa());
 
     }
@@ -205,7 +206,7 @@ public class ReloadAnim : MonoBehaviour
 
         Debug.Log("191");
         Vector3 currentposition = Grip.transform.localPosition;
-        
+
         //recoilBack = new Vector3(currentposition.x + 1f, currentposition.y, currentposition.z - 1f);
 
 
@@ -238,7 +239,7 @@ public class ReloadAnim : MonoBehaviour
         }
 
         //yield return null;
-     
+
         //while (currentposition != originPos)
         //{
         //    currentposition = Vector3.Lerp(currentposition, originPos, 0.1f);
@@ -248,7 +249,7 @@ public class ReloadAnim : MonoBehaviour
 
     IEnumerator Pistolaa()
     {
-     
+
 
 
         Debug.Log("191");
@@ -257,11 +258,11 @@ public class ReloadAnim : MonoBehaviour
         Vector3 currentposition1 = new Vector3(currentposition.x, pistolPos.y + 0.2f, currentposition.z);
 
         Quaternion currentrotation = PistolGrip.transform.localRotation;
-       
 
 
 
-    
+
+
 
 
 
@@ -269,7 +270,7 @@ public class ReloadAnim : MonoBehaviour
         Quaternion targetRotation = originrot * RecoilRotation;
 
         float elapsedTime = 0f;
-        while(elapsedTime < 0.1f)
+        while (elapsedTime < 0.1f)
         {
             currentposition = Vector3.Lerp(currentposition, currentposition1, elapsedTime / 0.1f);
             currentrotation = Quaternion.Lerp(PistolGrip.transform.localRotation, targetRotation, elapsedTime / 0.1f);
@@ -278,21 +279,21 @@ public class ReloadAnim : MonoBehaviour
             elapsedTime += Time.deltaTime;
 
 
-          //  shoot = false;
+            //  shoot = false;
             yield return null;
         }
 
         //recoilBack = new Vector3(currentposition.x + 1f, currentposition.y, currentposition.z - 1f);
 
-        while(currentrotation != originrot)
+        while (currentrotation != originrot)
         {
             currentrotation = Quaternion.Slerp(PistolGrip.transform.localRotation, originrot, 0.1f);
             PistolGrip.transform.localRotation = currentrotation;
 
-          //  shoot = true;
+            //  shoot = true;
             Debug.Log("291");
         }
-       // PistolGrip.transform.localRotation = originrot;
+        // PistolGrip.transform.localRotation = originrot;
         PistolGrip.transform.localPosition = pistolPos;
     }
 

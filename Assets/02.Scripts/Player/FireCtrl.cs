@@ -18,15 +18,15 @@ public class FireCtrl : MonoBehaviourPun
     public PhotonView pv;  //포톤 뷰
     public Animator gunAnim;  //총 애니메이션
     public Image crossHair;  //크로스헤어
-
     public Transform[] poses = new Transform[4]; //무기를 들고있을 위치들
     public GameObject explodePrefab;  //폭발 프리팹
-    public GameObject bulletEff;
+    public GameObject bulletEff;  //총알 자국
     public Weapon weapon;  //현재 무기
+    public CameraCtrl cameraCtrl;
 
     WeaponManager weaponManager;  //웨폰 매니저
-    LineRenderer lineRenderer;  //라인렌더러
-    //LineRenderer grenadeLine;
+    public LineRenderer lineRenderer;  //라인렌더러
+    LineRenderer grenadeLine;
     PlayerInput playerInput;  //입력
     Color originColor;  //크로스헤어 색
     Vector3 throwDirection = new Vector3(0, 0.5f, 0);  //던지는 방향
@@ -48,7 +48,6 @@ public class FireCtrl : MonoBehaviourPun
         //throwPosition = grenadeWeapon.GetComponentInChildren<Transform>();
         weapon = GetComponentInChildren<Weapon>();
         crossHair = GameObject.FindWithTag("CROSSHAIR").GetComponent<Image>();
-        //weaponManager = GameObject.FindWithTag("MANAGER").GetComponent<WeaponManager>();
         weaponManager = WeaponManager.instance;
         originColor = crossHair.color;  //크로스헤어 원래 색 저장.
         lineRenderer.positionCount = 2;
@@ -75,7 +74,8 @@ public class FireCtrl : MonoBehaviourPun
                 if (weapon.weaponType <= 1)  //현재무기가 주 무기, 보조 무기일 때
                 {
                     lastFireTime = Time.time;  //마지막 발사 시간 초기화
-                    Fire();  //총 발사
+                    //Fire();  //총 발사
+                    pv.RPC("FireRPC", RpcTarget.All);
                 }
                 else if (weapon.weaponType == 2)  //현재무기가 근접 무기일 때
                 {
@@ -119,7 +119,13 @@ public class FireCtrl : MonoBehaviourPun
         }
     }
 
-    void Fire()  //발사
+    [PunRPC]
+    void FireRPC()  //발사
+    {
+        Fire();
+    }
+
+    void Fire()
     {
         gunAnim.SetTrigger("Shot");
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);  //화면에서 마우스 위치로 레이 발사
@@ -149,23 +155,36 @@ public class FireCtrl : MonoBehaviourPun
             state = State.Empty;
         }
 
-        pv.RPC("ShotEff", RpcTarget.All, weapon.firePos.position, hitPosition);  //발사 효과
+        photonView.RPC("ShotEffRPC", RpcTarget.All, hitPosition);  //발사 효과
         Quaternion rot = Quaternion.FromToRotation(Vector3.forward, hitInfo.normal);
         GameObject bulletMark = Instantiate(bulletEff, hitPosition, rot);
+        Recoil();
     }
 
     [PunRPC]
-    IEnumerator ShotEff(Vector3 APos, Vector3 BPos)  //발사 효과
+    void ShotEffRPC(Vector3 point)
+    {
+        StartCoroutine(ShotEff(point));
+    }
+
+    IEnumerator ShotEff(Vector3 point)  //발사 효과
     {
         weapon.muzzleFlash.Play();
-        print(weapon.muzzleFlash);
+
         //두 인자 사이에 라인 그리고 지우기.
-        lineRenderer.SetPosition(0, APos);
-        lineRenderer.SetPosition(1, BPos);
+        lineRenderer.SetPosition(0, weapon.firePos.position);
+        lineRenderer.SetPosition(1, point);
         lineRenderer.enabled = true;
 
         yield return new WaitForSeconds(0.016f);
         lineRenderer.enabled = false;
+    }
+
+    void Recoil()
+    {
+        float randomX = Random.Range(-1, 2);
+        float randomY = Random.Range(1f, 2.5f);
+        cameraCtrl.SetCameraRotation(new Vector3(randomX, randomY, 0));
     }
 
     IEnumerator Reload()  //재장전
@@ -298,7 +317,6 @@ public class FireCtrl : MonoBehaviourPun
                     {
                         weapon.damage = 0;
                     }
-
 
                     target.OnDamage(weapon.damage, hit.point, hit.normal);
                 }

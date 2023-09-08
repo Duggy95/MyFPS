@@ -17,6 +17,7 @@ public class Weapon : MonoBehaviour
     public Transform firePos;  //총알 나가는 위치
     public Animator anim;  //애니메이터
     public ParticleSystem muzzleFlash;  //총구 화염 효과.
+    public Material fireMaterial;  //총알 발사 머터리얼
 
     private void Awake()
     {
@@ -49,6 +50,7 @@ public class Weapon : MonoBehaviour
         this.timeBetFire = gunData.timeBetFire;
         this.damage = gunData.damage;
         this.weaponType = gunData.weaponType;
+        this.fireMaterial = gunData.fireMaterial;
     }
 
     //총을 받아서 세팅. 쓰던 총을 받기 위해
@@ -64,5 +66,6 @@ public class Weapon : MonoBehaviour
         this.timeBetFire = weapon.timeBetFire;
         this.damage = weapon.damage;
         this.weaponType = weapon.weaponType;
+        this.fireMaterial = weapon.fireMaterial;
     }
 }
