@@ -6,7 +6,6 @@ using Photon.Pun;
 public class PlayerInput : MonoBehaviourPun
 {
     public PhotonView pv;
-    WeaponCtrl weaponCtrl;
     string moveAxisH = "Horizontal";  // 키보드 좌우 입력 (A, D) 
     string moveAxisV = "Vertical";  // 키보드 상하 입력 (W, S)
     string rotAxisX = "Mouse X";  // 마우스 좌우 이동
@@ -24,7 +23,7 @@ public class PlayerInput : MonoBehaviourPun
     string aimBtn = "Aim";  // 에임 (마우스 오른쪽)
     string escBtn = "Cancel";  // 취소 (Esc) 
 
-    public float h {  get; private set; }
+    public float h { get; private set; }
     public float v { get; private set; }
     public float rotX { get; private set; }
     public float rotY { get; private set; }
@@ -46,7 +45,7 @@ public class PlayerInput : MonoBehaviourPun
 
     private void Update()
     {
-        if(!pv.IsMine)
+        if (!pv.IsMine)
         {
             return;
         }
@@ -70,8 +69,6 @@ public class PlayerInput : MonoBehaviourPun
             grenade = Input.GetButtonDown(grenadeBtn);
             aim = Input.GetButtonDown(aimBtn);
             esc = Input.GetButtonDown(escBtn);
-            /*else  //아무것도 아닐 때
-                weapon = 10;*/
         }
     }
 }

@@ -9,7 +9,7 @@ public class PlayerMovement : LivingEntity, IPunObservable
     float walkSpeed;
     [SerializeField]
     float runSpeed;
-    [SerializeField]    
+    [SerializeField]
     float jumpForce;
     [SerializeField]
     float smoothTime;
@@ -34,7 +34,7 @@ public class PlayerMovement : LivingEntity, IPunObservable
     {
         if (!pv.IsMine)
         {
-            GetComponentInChildren<Camera>().gameObject.SetActive(false);
+            Destroy(GetComponentInChildren<Camera>().gameObject);
         }
 
         playerInput = GetComponent<PlayerInput>();
@@ -43,13 +43,13 @@ public class PlayerMovement : LivingEntity, IPunObservable
 
     void Update()
     {
-        if(pv.IsMine)
+        if (pv.IsMine)
             Jump();
     }
 
     private void FixedUpdate()
     {
-        if(pv.IsMine)
+        if (pv.IsMine)
         {
             Move();
         }
@@ -62,7 +62,7 @@ public class PlayerMovement : LivingEntity, IPunObservable
     void Move()
     {
         Vector3 moveDir = (transform.forward * playerInput.v) + (transform.right * playerInput.h);
-        Vector3 moveDis = moveDir.normalized * (playerInput.walk?walkSpeed:runSpeed);
+        Vector3 moveDis = moveDir.normalized * (playerInput.walk ? walkSpeed : runSpeed);
         rb.MovePosition(transform.position + moveDis * Time.deltaTime);
     }
 
@@ -87,12 +87,12 @@ public class PlayerMovement : LivingEntity, IPunObservable
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if(stream.IsWriting)
+        if (stream.IsWriting)
         {
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
         }
-        else if(stream.IsReading)
+        else if (stream.IsReading)
         {
             setPos = (Vector3)stream.ReceiveNext();
             setRot = (Quaternion)stream.ReceiveNext();

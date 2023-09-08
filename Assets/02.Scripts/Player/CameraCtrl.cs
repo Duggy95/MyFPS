@@ -41,9 +41,6 @@ public class CameraCtrl : MonoBehaviour, IPunObservable
 
     void FixedUpdate()
     {
-        if (!pv.IsMine)
-            return;
-
         if (pv.IsMine)
         {
             player.Rotate(eulerAngleY);  //카메라의 회전값을 플레이어 한테 적용
