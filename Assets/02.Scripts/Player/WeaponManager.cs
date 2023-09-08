@@ -139,8 +139,8 @@ public class WeaponManager : MonoBehaviourPun
     [PunRPC]
     void PvPlayerFind()
     {
-        playerInput = testPhoton.player.GetComponent<PlayerInput>();
-        fireCtrl = testPhoton.player.GetComponent<FireCtrl>();
+        playerInput = BattleManager.instance.myPlayer.GetComponent<PlayerInput>();
+        fireCtrl = BattleManager.instance.myPlayer.GetComponent<FireCtrl>();
         poses = fireCtrl.poses; //플레이어가 가지고 있는 무기 위치들 받아옴.
         for (int i = 0; i < poses.Length; i++)
         {

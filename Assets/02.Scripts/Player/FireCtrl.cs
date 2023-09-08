@@ -182,8 +182,8 @@ public class FireCtrl : MonoBehaviourPun
 
     void Recoil()
     {
-        float randomX = Random.Range(-1, 2);
-        float randomY = Random.Range(1f, 2.5f);
+        float randomX = Random.Range(-0.5f, 0.5f);
+        float randomY = Random.Range(1f, weapon.recoilY);
         cameraCtrl.SetCameraRotation(new Vector3(randomX, randomY, 0));
     }
 

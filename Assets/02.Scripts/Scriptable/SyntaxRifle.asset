@@ -20,7 +20,8 @@ MonoBehaviour:
   reloadTime: 1.5
   magCapacity: 30
   ammoRemain: 120
-  timeBetFire: 0.14
+  timeBetFire: 0.12
+  recoilY: 2.5
   shotClip: {fileID: 0}
   reloadClip: {fileID: 0}
   fireMaterial: {fileID: 2100000, guid: 99bcb32a067ca8040876558df3e6258a, type: 2}
