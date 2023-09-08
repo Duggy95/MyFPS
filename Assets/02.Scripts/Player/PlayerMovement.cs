@@ -32,9 +32,9 @@ public class PlayerMovement : LivingEntity, IPunObservable
 
     void Start()
     {
-        if(!pv.IsMine)
+        if (!pv.IsMine)
         {
-            Destroy(GetComponentInChildren<Camera>().gameObject);
+            GetComponentInChildren<Camera>().gameObject.SetActive(false);
         }
 
         playerInput = GetComponent<PlayerInput>();

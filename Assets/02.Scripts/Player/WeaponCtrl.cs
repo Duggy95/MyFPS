@@ -174,8 +174,7 @@ public class WeaponCtrl : MonoBehaviourPun
     public void GetWeapon(Weapon weapon)  //무기를 줍는 메서드.
     {
         //무기 생성해서 pos의 자식으로 넣어줌.
-        GameObject gun = PhotonNetwork.Instantiate(weapon.weaponName, Vector3.zero,
-                                                                                                     Quaternion.identity);
+        GameObject gun = PhotonNetwork.Instantiate(weapon.weaponName, Vector3.zero, Quaternion.identity);
         gun.transform.SetParent(poses[weapon.weaponType]);
         gun.transform.localPosition = Vector3.zero;
         gun.transform.localEulerAngles = Vector3.zero;

@@ -508,6 +508,7 @@ MonoBehaviour:
   bulletEff: {fileID: 1000010355441670, guid: 02a509a7fa70ed740ba4197e20c5d32d, type: 3}
   weapon: {fileID: 0}
   cameraCtrl: {fileID: 7614032437743225744}
+  myCamera: {fileID: 0}
   lineRenderer: {fileID: 0}
 --- !u!120 &7771218908077651533
 LineRenderer:
@@ -693,7 +694,7 @@ GameObject:
   - component: {fileID: 7771218908135519054}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: MainCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

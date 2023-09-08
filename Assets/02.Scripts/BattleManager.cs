@@ -33,8 +33,8 @@ public class BattleManager : MonoBehaviourPun
     public string teamName;   // 블루인지 레드인지
     [HideInInspector]
     public GameObject myPlayer;  // 내가 조작하는 플레이어
-
-    Camera myCamera;  // 현재 내 플레이어의 카메라
+    [HideInInspector]
+    public Camera myCamera;  // 현재 내 플레이어의 카메라
     PhotonView pv;
     Vector3 spawnDis;   // 스폰될 곳과의 거리
     List<Image> profiles = new List<Image>();
