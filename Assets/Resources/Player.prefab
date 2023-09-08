@@ -379,7 +379,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7771218907995868320}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 783a99f2549176d41bedaa2603aae9f5, type: 3}
+  m_Script: {fileID: 11500000, guid: d793719285e6f744a9e77c5722680685, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   mouseSensitivity: 2
@@ -675,7 +675,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7771218908077651510}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4e81f99b555eff4fa6d3d0d2792a46a, type: 3}
+  m_Script: {fileID: 11500000, guid: 4d042b75ac4e3de4b9787ef03819a8c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   startingHealth: 100
