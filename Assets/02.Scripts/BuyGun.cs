@@ -20,14 +20,10 @@ public class BuyGun : MonoBehaviour
     public GameObject Camo;
     public GameObject Sniper;
     public GameObject weaponchoose;
-
     public GameObject[] Shopguns = new GameObject[6];
 
-    Color originColor;
-
-    public Image[] Greenimages = new Image[8];
     public Sprite[] gunsprites = new Sprite[6];
-
+    public Image[] Greenimages = new Image[8];
     public Image grenadeimage;
     public Image vestImage;
     public Text remainningtime;
@@ -50,12 +46,11 @@ public class BuyGun : MonoBehaviour
     public SkinnedMeshRenderer Torso;
     public SkinnedMeshRenderer Leg;
 
+    Color originColor;
     bool choose = false;
     bool[] guncheck = new bool[8];
     bool[] gunsbuy = new bool[8];
     float maxTime = 20;
-
-    
     int Totalmoney;
 
     void Start()
@@ -69,8 +64,6 @@ public class BuyGun : MonoBehaviour
         }
 
         originColor = Greenimages[0].color;
-
-        
         Totalmoney = int.Parse(MoneyText.text);
     }
 
@@ -85,11 +78,10 @@ public class BuyGun : MonoBehaviour
         else
         {
             remainningtime.text = "Buy Time Remaining : 00 : " + (int)maxTime;
-
         }
         if (0 >= maxTime)
         {
-            //CloseMarket();
+            CloseMarket();
         }
 
         if (choose)
@@ -128,7 +120,6 @@ public class BuyGun : MonoBehaviour
     {
         BattleManager.instance.Ready();
     }
-
 
     public void BuyGunClick()
     {

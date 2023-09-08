@@ -29,7 +29,7 @@ public class CameraCtrl : MonoBehaviour, IPunObservable
         eulerAngleX += playerInput.rotY * mouseSensitivity;  //마우스 위아래
         eulerAngleX = Mathf.Clamp(eulerAngleX, -90, 90);  //위아래 각도 90도씩 제한
 
-        if(pv.IsMine)
+        if (pv.IsMine)
         {
             transform.localEulerAngles = Vector3.left * eulerAngleX;  //X축으로 카메라 각도 조정.
         }
@@ -41,19 +41,22 @@ public class CameraCtrl : MonoBehaviour, IPunObservable
 
     void FixedUpdate()
     {
-        if(pv.IsMine)
+        if (!pv.IsMine)
+            return;
+
+        if (pv.IsMine)
         {
             player.Rotate(eulerAngleY);  //카메라의 회전값을 플레이어 한테 적용
-        } 
+        }
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if(stream.IsWriting)
+        if (stream.IsWriting)
         {
             stream.SendNext(transform.rotation);
         }
-        else if(stream.IsReading)
+        else if (stream.IsReading)
         {
             setAngle = (Quaternion)stream.ReceiveNext();
         }

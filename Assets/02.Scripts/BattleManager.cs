@@ -33,8 +33,8 @@ public class BattleManager : MonoBehaviourPun
     public string teamName;   // 블루인지 레드인지
     [HideInInspector]
     public GameObject myPlayer;  // 내가 조작하는 플레이어
-
-    Camera myCamera;  // 현재 내 플레이어의 카메라
+    [HideInInspector]
+    public Camera myCamera;  // 현재 내 플레이어의 카메라
     PhotonView pv;
     Vector3 spawnDis;   // 스폰될 곳과의 거리
     List<Image> profiles = new List<Image>();
@@ -134,6 +134,7 @@ public class BattleManager : MonoBehaviourPun
             // 블루팀이면 블루팀 스폰 포지션 중 하나에 랜덤 생성
             int spawnNum = Random.Range(0, blueTeamSpawnPos.Length);
             myPlayer = PhotonNetwork.Instantiate("Player", blueTeamSpawnPos[spawnNum].position + spawnDis, Quaternion.identity);
+            WeaponManager.instance.PlayerFind();
             myCamera = myPlayer.GetComponentInChildren<Camera>();
         }
         else if (teamName == "Red")
@@ -141,6 +142,7 @@ public class BattleManager : MonoBehaviourPun
             // 레드팀이면 레드팀 스폰 포지션 중 하나에 랜덤 생성
             int spawnNum = Random.Range(0, redTeamSpawnPos.Length);
             myPlayer = PhotonNetwork.Instantiate("Player", redTeamSpawnPos[spawnNum].position + spawnDis, Quaternion.identity);
+            WeaponManager.instance.PlayerFind();
             myCamera = myPlayer.GetComponentInChildren<Camera>();
         }
     }

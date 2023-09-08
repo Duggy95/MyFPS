@@ -1,10 +1,7 @@
 using Photon.Pun;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
 public class FireCtrl : MonoBehaviourPun, IPunObservable
 {
@@ -23,14 +20,18 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
     public GameObject bulletEff;  //총알 자국
     public Weapon weapon;  //현재 무기
     public CameraCtrl cameraCtrl;
-
-    Ray ray;
-    WeaponCtrl weaponCtrl;  //웨폰컨트롤러
+    public Camera myCamera;
     public LineRenderer lineRenderer;  //라인렌더러
+
+    WeaponCtrl weaponCtrl;  //웨폰 매니저
     LineRenderer grenadeLine;
     PlayerInput playerInput;  //입력
     Color originColor;  //크로스헤어 색
-    Vector3 throwDirection = new Vector3(0, 0.5f, 0);  //던지는 방향
+    Vector3 throwDirection = new Vector3(0, 0.5f, 0);  //던지는 방향]
+    Vector3 hitPos;
+    Vector3 recPos;
+    Quaternion effRot;
+    Quaternion recRot;
     float lastFireTime;  //마지막 발사
     int ammoToFill;  //채워야 할 총알 수
     //Transform throwPosition;
@@ -53,6 +54,7 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
         originColor = crossHair.color;  //크로스헤어 원래 색 저장.
         lineRenderer.positionCount = 2;
         lineRenderer.enabled = false;
+        myCamera = GetComponentInChildren<Camera>();
     }
 
     void OnEnable()  //생성되었을 때 초기화.
@@ -75,7 +77,7 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
                 if (weapon.weaponType <= 1)  //현재무기가 주 무기, 보조 무기일 때
                 {
                     lastFireTime = Time.time;  //마지막 발사 시간 초기화
-                    pv.RPC("FireRPC", RpcTarget.All);  //총 발사
+                    pv.RPC("FireRPC", RpcTarget.All);  //총발사
                 }
                 else if (weapon.weaponType == 2)  //현재무기가 근접 무기일 때
                 {
@@ -128,45 +130,48 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
     void Fire()
     {
         gunAnim.SetTrigger("Shot");
-        if(pv.IsMine)
+
+        if (pv.IsMine)
         {
-            ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);  //화면에서 마우스 위치로 레이 발사
+            Ray ray = myCamera.ScreenPointToRay(Input.mousePosition);  //화면에서 마우스 위치로 레이 발사            
+
+            RaycastHit hitInfo;
+            Vector3 hitPosition = Vector3.zero;
+
+            if (Physics.Raycast(ray, out hitInfo, weapon.fireDistance))
+            {
+                IDamageable target = hitInfo.collider.GetComponent<IDamageable>();  //맞은 놈한테서 IDamageble 가져와서
+
+                if (target != null)  //가져오는데 성공하면 데미지 받는 함수 호출하고, 크로스헤어 색깔 바꾸기.
+                {
+                    target.OnDamage(weapon.damage, hitInfo.point, hitInfo.normal);
+                    StartCoroutine(ChangeColor());
+                }
+                hitPosition = hitInfo.point;  //맞은 위치 저장.
+            }
+            else  //레이에 아무것도 안 맞았으면, 사격거리 끝을 맞은 위치로.
+            {
+                hitPosition = weapon.firePos.position + weapon.firePos.forward * weapon.fireDistance;
+            }
+
+            weapon.magAmmo--;
+            if (weapon.magAmmo <= 0)  //총알이 떨어지면 Empty로
+            {
+                state = State.Empty;
+            }
+
+            //photonView.RPC("ShotEffRPC", RpcTarget.All, hitPosition);  //발사 효과
+            StartCoroutine(ShotEff(hitPosition));
+            Quaternion rot = Quaternion.FromToRotation(Vector3.forward, hitInfo.normal);
+            GameObject bulletMark = Instantiate(bulletEff, hitPosition, rot);
+            Recoil();
         }
         else
         {
-            ray = new Ray(transform.position, transform.forward);
+            StartCoroutine(ShotEff(recPos));
+            GameObject bulletMark = Instantiate(bulletEff, hitPos, recRot);
+            Recoil();
         }
-        
-        RaycastHit hitInfo;
-        Vector3 hitPosition = Vector3.zero;
-
-        if (Physics.Raycast(ray, out hitInfo, weapon.fireDistance))
-        {
-            IDamageable target = hitInfo.collider.GetComponent<IDamageable>();  //맞은 놈한테서 IDamageble 가져와서
-
-            if (target != null)  //가져오는데 성공하면 데미지 받는 함수 호출하고, 크로스헤어 색깔 바꾸기.
-            {
-                target.OnDamage(weapon.damage, hitInfo.point, hitInfo.normal);
-                StartCoroutine(ChangeColor());
-            }
-            hitPosition = hitInfo.point;  //맞은 위치 저장.
-        }
-        else  //레이에 아무것도 안 맞았으면, 사격거리 끝을 맞은 위치로.
-        {
-            hitPosition = weapon.firePos.position + weapon.firePos.forward * weapon.fireDistance;
-        }
-
-        weapon.magAmmo--;
-        if (weapon.magAmmo <= 0)  //총알이 떨어지면 Empty로
-        {
-            state = State.Empty;
-        }
-
-        StartCoroutine(ShotEff(hitPosition));
-        //photonView.RPC("ShotEffRPC", RpcTarget.All, hitPosition);  //발사 효과
-        Quaternion rot = Quaternion.FromToRotation(Vector3.forward, hitInfo.normal);
-        GameObject bulletMark = Instantiate(bulletEff, hitPosition, rot);
-        Recoil();
     }
 
     [PunRPC]
@@ -336,12 +341,16 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
     {
         if (stream.IsWriting)
         {
+            stream.SendNext(hitPos);
+            stream.SendNext(effRot);
             stream.SendNext(weapon.ammoRemain);
             stream.SendNext(weapon.magAmmo);
             stream.SendNext(state);
         }
         else
         {
+            recPos = (Vector3)stream.ReceiveNext();
+            recRot = (Quaternion)stream.ReceiveNext();
             weapon.ammoRemain = (int)stream.ReceiveNext();
             weapon.magAmmo = (int)stream.ReceiveNext();
             state = (State)stream.ReceiveNext();

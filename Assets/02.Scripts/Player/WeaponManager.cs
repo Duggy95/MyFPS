@@ -16,7 +16,6 @@ public class WeaponManager : MonoBehaviourPun
     public Transform[] poses = new Transform[4];  //내가 무기를 가져야 할 위치들. 0 = 주무기, 1 = 보조무기, 2 = 나이프, 3 = 수류탄
     PlayerInput playerInput;  //플레이어 입력
     FireCtrl fireCtrl;  //플레이어가 가지고 있는 발사기능
-    public TestPhoton testPhoton;
     public Weapon currWeapon;  //현재 무기
     PhotonView pv;
     Vector3 throwDirection = new Vector3(0, 1, 0);  //던지는 방향
@@ -50,13 +49,8 @@ public class WeaponManager : MonoBehaviourPun
 
     void Update()
     {
-        if (playerInput != null && playerInput.weapon != 10)
+        /*if (playerInput != null && playerInput.weapon != 10)
         {
-            if(!photonView.IsMine)
-            {
-                return;
-            }
-
             switch (playerInput.weapon)  //플레이어 입력을 받아서 
             {
                 //받은 입력에 따라 무기를 바꿈.
@@ -82,8 +76,8 @@ public class WeaponManager : MonoBehaviourPun
                     break;
             }
 
-            StateCheck(currWeapon);
-        }
+        }*/
+        StateCheck(currWeapon);
     }
 
     public void Switch(int i)
@@ -94,6 +88,11 @@ public class WeaponManager : MonoBehaviourPun
     [PunRPC]
     void SwichRPC(int i)
     {
+        if(!pv.IsMine)
+        {
+            return;
+        }
+
         switch (i)  //플레이어 입력을 받아서 
         {
             //받은 입력에 따라 무기를 바꿈.
@@ -139,8 +138,8 @@ public class WeaponManager : MonoBehaviourPun
     [PunRPC]
     void PvPlayerFind()
     {
-        playerInput = testPhoton.player.GetComponent<PlayerInput>();
-        fireCtrl = testPhoton.player.GetComponent<FireCtrl>();
+        playerInput = BattleManager.instance.myPlayer.GetComponent<PlayerInput>();
+        fireCtrl = BattleManager.instance.myPlayer.GetComponent<FireCtrl>();
         for (int i = 0; i < poses.Length; i++)
         {
             //무기 위치들의 자식에 무기로부터 무기가져와서 배열에 넣어줌. 무기를 안들고 있으면 null값 들어갈 것임.
