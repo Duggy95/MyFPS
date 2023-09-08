@@ -58,4 +58,10 @@ public class CameraCtrl : MonoBehaviour, IPunObservable
             setAngle = (Quaternion)stream.ReceiveNext();
         }
     }
+
+    public void SetCameraRotation(Vector3 newRotation)
+    {
+        eulerAngleX += newRotation.y;
+        eulerAngleY += newRotation.x;
+    }
 }

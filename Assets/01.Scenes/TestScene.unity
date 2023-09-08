@@ -292,11 +292,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  photonViews:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   testPhoton: {fileID: 1450352103}
   currWeapon: {fileID: 0}
 --- !u!4 &276188854

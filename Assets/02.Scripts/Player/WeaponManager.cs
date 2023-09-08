@@ -14,7 +14,6 @@ public class WeaponManager : MonoBehaviourPun
     public GunData[] datas = new GunData[4];  //무기 데이터들
     public Weapon[] weapons = new Weapon[4];  //내가 가지고 있는 무기들. 0 = 주무기, 1 = 보조무기, 2 = 나이프, 3 = 수류탄.
     public Transform[] poses = new Transform[4];  //내가 무기를 가져야 할 위치들. 0 = 주무기, 1 = 보조무기, 2 = 나이프, 3 = 수류탄
-    public PhotonView[] photonViews = new PhotonView[4];
     PlayerInput playerInput;  //플레이어 입력
     FireCtrl fireCtrl;  //플레이어가 가지고 있는 발사기능
     public TestPhoton testPhoton;
@@ -57,19 +56,23 @@ public class WeaponManager : MonoBehaviourPun
             {
                 //받은 입력에 따라 무기를 바꿈.
                 case 0:
-                    SwitchWeapon(0);
+                    //SwitchWeapon(0);
+                    Switch(0);
                     //pv.RPC("SwitchWeapon", RpcTarget.Others, 0);
                     break;
                 case 1:
-                    SwitchWeapon(1);
+                    //SwitchWeapon(1);
+                    Switch(1);
                     //pv.RPC("SwitchWeapon", RpcTarget.Others, 1);
                     break;
                 case 2:
-                    SwitchWeapon(2);
+                    //SwitchWeapon(2);
+                    Switch(2);
                     //pv.RPC("SwitchWeapon", RpcTarget.Others, 2);
                     break;
                 case 3:
-                    SwitchWeapon(3);
+                    //SwitchWeapon(3);
+                    Switch(3);
                     //pv.RPC("SwitchWeapon", RpcTarget.Others, 3);
                     break;
             }
@@ -86,6 +89,11 @@ public class WeaponManager : MonoBehaviourPun
     [PunRPC]
     void SwichRPC(int i)
     {
+        if(!pv.IsMine)
+        {
+            return;
+        }
+
         switch (i)  //플레이어 입력을 받아서 
         {
             //받은 입력에 따라 무기를 바꿈.
@@ -186,6 +194,7 @@ public class WeaponManager : MonoBehaviourPun
         currWeapon = weapons[weaponIndex];
         fireCtrl.weapon = currWeapon;
         fireCtrl.gunAnim = currWeapon.anim;
+        fireCtrl.lineRenderer.material = currWeapon.fireMaterial;
     }
 
     public void StateCheck(Weapon currWeapon)  //현재 상태 체크 메서드.
