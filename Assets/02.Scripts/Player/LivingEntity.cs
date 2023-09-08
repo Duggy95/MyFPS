@@ -42,7 +42,8 @@ public class LivingEntity : MonoBehaviourPun, IDamageable
             print("»ç¸Á");
             //photonView.TransferOwnership(PhotonNetwork.MasterClient);
             //photonView.RPC("Die", RpcTarget.All);
-            StartCoroutine(PlayerDie());
+            photonView.RPC("Die", RpcTarget.All);
+            //StartCoroutine(PlayerDie());
         }
     }
 

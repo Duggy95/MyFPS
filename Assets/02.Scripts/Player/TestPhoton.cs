@@ -37,6 +37,5 @@ public class TestPhoton : MonoBehaviourPunCallbacks
     {
         player = PhotonNetwork.Instantiate("Player", Vector3.up, Quaternion.identity);
         battleUIManager.PlayerFind();
-        weaponManager.PlayerFind();
     }
 }

@@ -15,12 +15,13 @@ MonoBehaviour:
   gunName: SyntaxRifle
   weaponType: 0
   damage: 8
+  price: 0
   distance: 800
   reloadTime: 1.5
   magCapacity: 30
   ammoRemain: 120
-  timeBetFire: 0.2
-  gunPrefab: {fileID: 0}
-  weaponAnim: {fileID: 0}
+  timeBetFire: 0.12
+  recoilY: 2.5
   shotClip: {fileID: 0}
   reloadClip: {fileID: 0}
+  fireMaterial: {fileID: 0}

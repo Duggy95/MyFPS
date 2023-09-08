@@ -14,9 +14,11 @@ public class Weapon : MonoBehaviour
     public float reloadTime;  //재장전 시간
     public float timeBetFire;  //총알 발사간격
     public float damage;  //총알 데미지
+    public float recoilY;  //총 수직반동.
     public Transform firePos;  //총알 나가는 위치
     public Animator anim;  //애니메이터
     public ParticleSystem muzzleFlash;  //총구 화염 효과.
+    public Material fireMaterial;  //총알 발사 머터리얼
 
     private void Awake()
     {
@@ -49,6 +51,8 @@ public class Weapon : MonoBehaviour
         this.timeBetFire = gunData.timeBetFire;
         this.damage = gunData.damage;
         this.weaponType = gunData.weaponType;
+        this.fireMaterial = gunData.fireMaterial;
+        this.recoilY = gunData.recoilY;
     }
 
     //총을 받아서 세팅. 쓰던 총을 받기 위해
@@ -64,5 +68,7 @@ public class Weapon : MonoBehaviour
         this.timeBetFire = weapon.timeBetFire;
         this.damage = weapon.damage;
         this.weaponType = weapon.weaponType;
+        this.fireMaterial = weapon.fireMaterial;
+        this.recoilY = weapon.recoilY;
     }
 }

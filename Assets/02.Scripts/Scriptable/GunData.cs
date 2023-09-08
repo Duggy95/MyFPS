@@ -14,8 +14,8 @@ public class GunData : ScriptableObject
     public int magCapacity;  //탄창
     public int ammoRemain;
     public float timeBetFire;  //발사 간격 = 연사 속도
-    public GameObject gunPrefab;  //프리팹 모델
-    public Animator weaponAnim;
+    public float recoilY;  //총 수직반동.
     public AudioClip shotClip;  //총소리 클립
     public AudioClip reloadClip;  //재장전 클립
+    public Material fireMaterial;  //총 발사 머터리얼
 }

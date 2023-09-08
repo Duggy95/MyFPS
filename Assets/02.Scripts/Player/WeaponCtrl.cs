@@ -1,16 +1,10 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
-using Photon.Realtime;
-using Photon.Pun.Demo.Cockpit;
-using Unity.VisualScripting;
 
-//무기를 관리하기 위한 매니저.
-//무기 버리기, 줍기, 새로 얻기, 무기 바꾸기 기능.
-public class WeaponManager : MonoBehaviourPun
+public class WeaponCtrl : MonoBehaviourPun
 {
-    private static WeaponManager _instance;  //싱글톤
     public GunData[] datas = new GunData[4];  //무기 데이터들
     public Weapon[] weapons = new Weapon[4];  //내가 가지고 있는 무기들. 0 = 주무기, 1 = 보조무기, 2 = 나이프, 3 = 수류탄.
     public Transform[] poses = new Transform[4];  //내가 무기를 가져야 할 위치들. 0 = 주무기, 1 = 보조무기, 2 = 나이프, 3 = 수류탄
@@ -18,77 +12,72 @@ public class WeaponManager : MonoBehaviourPun
     FireCtrl fireCtrl;  //플레이어가 가지고 있는 발사기능
     public TestPhoton testPhoton;
     public Weapon currWeapon;  //현재 무기
-    PhotonView pv;
     Vector3 throwDirection = new Vector3(0, 1, 0);  //던지는 방향
 
-    public static WeaponManager instance  //WeaponManager타입의 변수 instance는 아래 코드대로 _instance를 반환하는 스태틱 매서드 역할.
+    // Start is called before the first frame update
+    void Start()
     {
-        get
+        playerInput = GetComponent<PlayerInput>();
+        fireCtrl = GetComponent<FireCtrl>();
+        for (int i = 0; i < poses.Length; i++)
         {
-            // 만약 싱글톤 변수에 아직 오브젝트가 할당되지 않았다면
-            if (_instance == null)
-            {
-                // 씬에서 GameManager 오브젝트를 찾아 할당
-                _instance = FindObjectOfType<WeaponManager>();
-            }
-            // 싱글톤 오브젝트를 반환
-            return _instance;
-        }
-    }
-
-    private void Awake()
-    {
-        // 씬에 싱글톤 오브젝트가 된 다른 GameManager 오브젝트가 있다면
-        if (instance != this)   //주소값으로 비교하는것
-        {
-            // 자신을 파괴
-            Destroy(gameObject);
+            //무기 위치들의 자식에 무기로부터 무기가져와서 배열에 넣어줌. 무기를 안들고 있으면 null값 들어갈 것임.
+            weapons[i] = poses[i].GetComponentInChildren<Weapon>();
         }
 
-        pv = GetComponent<PhotonView>();
+        Setting();  //초기 무기값 세팅.
+        SwitchWeapon(1);  //보조무기 활성화.
     }
 
+    // Update is called once per frame
     void Update()
     {
-        if (playerInput != null && playerInput.weapon != 10)
+        if (playerInput.mainGun)
         {
-            if(!photonView.IsMine)
-            {
-                return;
-            }
-
-            switch (playerInput.weapon)  //플레이어 입력을 받아서 
-            {
-                //받은 입력에 따라 무기를 바꿈.
-                case 0:
-                    //SwitchWeapon(0);
-                    Switch(0);
-                    //pv.RPC("SwitchWeapon", RpcTarget.Others, 0);
-                    break;
-                case 1:
-                    //SwitchWeapon(1);
-                    Switch(1);
-                    //pv.RPC("SwitchWeapon", RpcTarget.Others, 1);
-                    break;
-                case 2:
-                    //SwitchWeapon(2);
-                    Switch(2);
-                    //pv.RPC("SwitchWeapon", RpcTarget.Others, 2);
-                    break;
-                case 3:
-                    //SwitchWeapon(3);
-                    Switch(3);
-                    //pv.RPC("SwitchWeapon", RpcTarget.Others, 3);
-                    break;
-            }
-
-            StateCheck(currWeapon);
+            Switch(0);
+        }
+        else if (playerInput.subGun)
+        {
+            Switch(1);
+        }
+        else if (playerInput.knife)
+        {
+            Switch(2);
+        }
+        else if (playerInput.grenade)
+        {
+            Switch(3);
         }
     }
 
     public void Switch(int i)
     {
-        pv.RPC("SwichRPC", RpcTarget.All, i);
+        photonView.RPC("SwichRPC", RpcTarget.All, i);
+        /*if (!photonView.IsMine)
+        {
+            return;
+        }
+
+        switch (i)  //플레이어 입력을 받아서 
+        {
+            //받은 입력에 따라 무기를 바꿈.
+            case 0:
+                SwitchWeapon(0);
+                //pv.RPC("SwitchWeapon", RpcTarget.Others, 0);
+                break;
+            case 1:
+                SwitchWeapon(1);
+                //pv.RPC("SwitchWeapon", RpcTarget.Others, 1);
+                break;
+            case 2:
+                SwitchWeapon(2);
+                //pv.RPC("SwitchWeapon", RpcTarget.Others, 2);
+                break;
+            case 3:
+                SwitchWeapon(3);
+                //pv.RPC("SwitchWeapon", RpcTarget.Others, 3);
+                break;
+        }*/
     }
 
     [PunRPC]
@@ -116,40 +105,6 @@ public class WeaponManager : MonoBehaviourPun
         }
 
         StateCheck(currWeapon);
-    }
-
-    public void PlayerFind()  //맨 처음 플레이어 생성되었을 때 호출되는 메서드
-    {
-        /*playerInput = testPhoton.player.GetComponent<PlayerInput>();
-        fireCtrl = testPhoton.player.GetComponent<FireCtrl>();
-        poses = fireCtrl.poses; //플레이어가 가지고 있는 무기 위치들 받아옴.
-        for (int i = 0; i < poses.Length; i++)
-        {
-            //무기 위치들의 자식에 무기로부터 무기가져와서 배열에 넣어줌. 무기를 안들고 있으면 null값 들어갈 것임.
-            weapons[i] = poses[i].GetComponentInChildren<Weapon>();
-            //photonViews[i] = poses[i].GetComponent<PhotonView>();
-        }
-
-        Setting();  //초기 무기값 세팅.
-        SwitchWeapon(1);  //보조무기 활성화.*/
-        //photonView.RPC("SwitchWeapon", RpcTarget.Others, 1);
-        pv.RPC("PvPlayerFind", RpcTarget.All);
-    }
-
-    [PunRPC]
-    void PvPlayerFind()
-    {
-        playerInput = testPhoton.player.GetComponent<PlayerInput>();
-        fireCtrl = testPhoton.player.GetComponent<FireCtrl>();
-        for (int i = 0; i < poses.Length; i++)
-        {
-            //무기 위치들의 자식에 무기로부터 무기가져와서 배열에 넣어줌. 무기를 안들고 있으면 null값 들어갈 것임.
-            weapons[i] = poses[i].GetComponentInChildren<Weapon>();
-            //photonViews[i] = poses[i].GetComponent<PhotonView>();
-        }
-
-        Setting();  //초기 무기값 세팅.
-        SwitchWeapon(1);  //보조무기 활성화.
     }
 
     void Setting()
@@ -194,6 +149,7 @@ public class WeaponManager : MonoBehaviourPun
         fireCtrl.weapon = currWeapon;
         fireCtrl.gunAnim = currWeapon.anim;
         fireCtrl.lineRenderer.material = currWeapon.fireMaterial;
+        StateCheck(currWeapon);
     }
 
     public void StateCheck(Weapon currWeapon)  //현재 상태 체크 메서드.
@@ -218,8 +174,7 @@ public class WeaponManager : MonoBehaviourPun
     public void GetWeapon(Weapon weapon)  //무기를 줍는 메서드.
     {
         //무기 생성해서 pos의 자식으로 넣어줌.
-        GameObject gun = PhotonNetwork.Instantiate(weapon.weaponName, Vector3.zero,
-                                                                                                     Quaternion.identity);
+        GameObject gun = PhotonNetwork.Instantiate(weapon.weaponName, Vector3.zero, Quaternion.identity);
         gun.transform.SetParent(poses[weapon.weaponType]);
         gun.transform.localPosition = Vector3.zero;
         gun.transform.localEulerAngles = Vector3.zero;

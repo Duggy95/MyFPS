@@ -15,12 +15,13 @@ MonoBehaviour:
   gunName: HeavyRifle
   weaponType: 0
   damage: 5
+  price: 0
   distance: 800
   reloadTime: 1.5
   magCapacity: 25
   ammoRemain: 100
-  timeBetFire: 0.16
-  gunPrefab: {fileID: 166328, guid: ab7f98e521cca3f4585f71f6873210ab, type: 3}
-  weaponAnim: {fileID: 0}
+  timeBetFire: 0.1
+  recoilY: 2
   shotClip: {fileID: 0}
   reloadClip: {fileID: 0}
+  fireMaterial: {fileID: 2100000, guid: 99bcb32a067ca8040876558df3e6258a, type: 2}

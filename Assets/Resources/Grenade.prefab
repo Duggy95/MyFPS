@@ -158,3 +158,4 @@ MonoBehaviour:
   firePos: {fileID: 0}
   anim: {fileID: 0}
   muzzleFlash: {fileID: 0}
+  fireMaterial: {fileID: 0}

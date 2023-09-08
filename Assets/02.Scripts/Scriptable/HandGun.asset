@@ -15,12 +15,12 @@ MonoBehaviour:
   gunName: HandGun
   weaponType: 1
   damage: 10
+  price: 0
   distance: 600
   reloadTime: 1.5
   magCapacity: 12
   ammoRemain: 35
   timeBetFire: 0.75
-  gunPrefab: {fileID: 3832703582600972128, guid: d82cb5f0b811a434499bd041490c7a6c, type: 3}
-  weaponAnim: {fileID: 0}
   shotClip: {fileID: 0}
   reloadClip: {fileID: 0}
+  fireMaterial: {fileID: 2100000, guid: 99bcb32a067ca8040876558df3e6258a, type: 2}
