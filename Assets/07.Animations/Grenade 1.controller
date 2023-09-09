@@ -209,7 +209,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Lower Body
     m_StateMachine: {fileID: -6682595528451942775}
-    m_Mask: {fileID: 101100000, guid: b17357c5b478b5a4c9574dcdd8b1091c, type: 2}
+    m_Mask: {fileID: 101100000, guid: d821b99fb698e4341a37d08955a489a4, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
@@ -349,7 +349,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: d60c2af916cfe814896ba6053f5facee, type: 3}
+  m_Motion: {fileID: -203655887218126122, guid: 4839a0165417fc04e9097b7211210227, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
