@@ -24,7 +24,7 @@ public class ReloadAnim : MonoBehaviour
     public Transform KnifeLeftHandTarget;
     public Transform KnifeRightHandTarget;
 
-    public Transform GrenadeRightHandTarget;
+    public Transform GrenadeLeftHandTarget;
 
     public GameObject MainWeapon;
     public GameObject Pistol;
@@ -33,6 +33,9 @@ public class ReloadAnim : MonoBehaviour
 
     public GameObject Grip;
     public GameObject PistolGrip;
+
+    public GameObject Spine2;
+
 
     public RuntimeAnimatorController mainanim;
     public RuntimeAnimatorController pistolanim;
@@ -47,14 +50,24 @@ public class ReloadAnim : MonoBehaviour
 
     bool shoot = true;
 
+    public GameObject camera1;
 
     Vector3 currentposition;
+
+    Vector3 targetposition;
     Vector3 originPos; // 메인 무기 원위치 포지션
     Vector3 recoilBack;
     Vector3 pistolPos; // 권총 무기 원위치 포지션
 
+    Vector3 cameraposition;
+    Quaternion camerarotation;
 
+    
     Quaternion originrot; // 권총 원래 로테이션
+
+    public GameObject target;
+
+    Camera camera;
 
     // Start is called before the first frame update
     void Start()
@@ -71,11 +84,41 @@ public class ReloadAnim : MonoBehaviour
 
 
         pistolPos = PistolGrip.transform.localPosition;
+
+        cameraposition = camera1.transform.position;
+        camerarotation = camera1.transform.rotation;
+
+        //Debug.Log("cameraposition : " + cameraposition);
+        Debug.Log("camerarotation : " + camerarotation);
+
+
+        ///////////////////////////////////// 맨 처음 시작은 주총으로 해야함.
+        RightHand.weight = 1.0f;
+        LeftHand.weight = 1.0f;
+
+        LeftHand.data.target = MainLeftHandtarget;
+        RightHand.data.target = MainRightHandtarget;
+
+        playerrigbuilder.enabled = false; // 리그빌더 초기화
+        playerrigbuilder.enabled = true;
+        ///////////////////////////////////////
+
+
+        camera = GameObject.Find("Camera1").GetComponent<Camera>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        targetposition = target.transform.position;
+        cameraposition = camera1.transform.localPosition;
+        camerarotation = camera1.transform.localRotation;
+
+        camera.transform.LookAt(targetposition);
+            
+
+        Debug.Log(targetposition);
+
         if (Input.GetKeyDown(KeyCode.R) && MainWeapon.activeSelf)
         {
             mainreloadAnimation();
@@ -85,24 +128,69 @@ public class ReloadAnim : MonoBehaviour
             pistolreloadAnimation();
         }
 
-
+     
 
 
         if (Input.GetKeyDown(KeyCode.Alpha1))  //&& !MainWeapon.activeSelf)
         {
+            
+
+
             mainWeaponChange();
+            
+           // camera1.transform.SetParent(MainWeapon.transform);
+            //target.transform.SetParent(MainWeapon.transform);
+            
+          //   camera1.transform.localPosition = new Vector3(-0.58f, 0.65f, -0.06f);
+          //   camera1.transform.localRotation = Quaternion.Euler(28.1f, 17.604f, -5.3f);
+
+        
+
+            camera1.SetActive(true);
+           // target.transform.position = targetposition;
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2)) //&& !Pistol.activeSelf)
         {
+            
+
             pistolChange();
+           
+          //  camera1.transform.SetParent(Spine2.transform);
+           // target.transform.SetParent(Spine2.transform);
+
+          //  camera1.transform.localPosition = new Vector3(-1.133f, -0.17f, 0.968f);
+          //  camera1.transform.localRotation = Quaternion.Euler(-59f, 135f, -57f);
+
+          
+           // target.transform.position = targetposition;
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
+            
+
             knifeChange();
+            
+           // camera1.transform.SetParent(this.gameObject.transform.GetChild(1).transform);
+           // target.transform.SetParent(this.gameObject.transform.GetChild(1).transform);
+
+          //  camera1.transform.localPosition = new Vector3(0.07f, 0.29f, -0.15f);
+          //  camera1.transform.localRotation = Quaternion.Euler(0, 0, 0);
+
+          
+           // target.transform.position = targetposition;
         }
         else if (Input.GetKeyDown(KeyCode.Alpha4))
         {
+            
+
             grenadeChange();
+           // camera1.transform.SetParent(Spine2.transform);
+           // target.transform.SetParent(Spine2.transform);
+
+          //  camera1.transform.localPosition = new Vector3(-0.28f, 0.09f, 0.172f);
+          //  camera1.transform.localRotation = Quaternion.Euler(-76.2f, 79.555f, 10.694f);
+           
+            //target.transform.position = targetposition;
         }
 
 
@@ -132,22 +220,22 @@ public class ReloadAnim : MonoBehaviour
 
             if (Input.GetMouseButton(0) && shoot)
             {
-
-                Shot();
-
-
+                
+                    Shot();
+                
+                
 
             }
         }
-        else if (Pistol.activeSelf)
+        else if(Pistol.activeSelf)
         {
-            if (Input.GetMouseButtonDown(0) && shoot)
+            if(Input.GetMouseButtonDown(0) && shoot)
             {
                 StartCoroutine(Pistolaa());
 
             }
         }
-
+        
 
 
         if (Knife.activeSelf)
@@ -177,7 +265,7 @@ public class ReloadAnim : MonoBehaviour
 
     private void Shot()
     {
-
+        
         StartCoroutine(aa());
 
     }
@@ -206,7 +294,7 @@ public class ReloadAnim : MonoBehaviour
 
         Debug.Log("191");
         Vector3 currentposition = Grip.transform.localPosition;
-
+        
         //recoilBack = new Vector3(currentposition.x + 1f, currentposition.y, currentposition.z - 1f);
 
 
@@ -238,8 +326,10 @@ public class ReloadAnim : MonoBehaviour
 
         }
 
-        //yield return null;
+        Debug.Log("탕");
 
+        //yield return null;
+     
         //while (currentposition != originPos)
         //{
         //    currentposition = Vector3.Lerp(currentposition, originPos, 0.1f);
@@ -249,7 +339,7 @@ public class ReloadAnim : MonoBehaviour
 
     IEnumerator Pistolaa()
     {
-
+     
 
 
         Debug.Log("191");
@@ -258,11 +348,11 @@ public class ReloadAnim : MonoBehaviour
         Vector3 currentposition1 = new Vector3(currentposition.x, pistolPos.y + 0.2f, currentposition.z);
 
         Quaternion currentrotation = PistolGrip.transform.localRotation;
+       
 
 
 
-
-
+    
 
 
 
@@ -270,7 +360,7 @@ public class ReloadAnim : MonoBehaviour
         Quaternion targetRotation = originrot * RecoilRotation;
 
         float elapsedTime = 0f;
-        while (elapsedTime < 0.1f)
+        while(elapsedTime < 0.1f)
         {
             currentposition = Vector3.Lerp(currentposition, currentposition1, elapsedTime / 0.1f);
             currentrotation = Quaternion.Lerp(PistolGrip.transform.localRotation, targetRotation, elapsedTime / 0.1f);
@@ -279,22 +369,24 @@ public class ReloadAnim : MonoBehaviour
             elapsedTime += Time.deltaTime;
 
 
-            //  shoot = false;
+          //  shoot = false;
             yield return null;
         }
 
         //recoilBack = new Vector3(currentposition.x + 1f, currentposition.y, currentposition.z - 1f);
 
-        while (currentrotation != originrot)
+        while(currentrotation != originrot)
         {
             currentrotation = Quaternion.Slerp(PistolGrip.transform.localRotation, originrot, 0.1f);
             PistolGrip.transform.localRotation = currentrotation;
 
-            //  shoot = true;
+          //  shoot = true;
             Debug.Log("291");
         }
-        // PistolGrip.transform.localRotation = originrot;
+       // PistolGrip.transform.localRotation = originrot;
         PistolGrip.transform.localPosition = pistolPos;
+
+        Debug.Log("권총탕");
     }
 
 
@@ -337,13 +429,23 @@ public class ReloadAnim : MonoBehaviour
 
     void mainWeaponChange()
     {
-        Pistol.SetActive(false);
-        Knife.SetActive(false);
-        grenade.SetActive(false);
+        //Pistol.SetActive(false);
+        //Knife.SetActive(false);
+        //grenade.SetActive(false);
 
+        Debug.Log("416 : " + targetposition);
 
         animator.runtimeAnimatorController = mainanim; // 컨트롤러는 메인무기 끼고있는거로 바꿔준다.
-        MainWeapon.SetActive(true);
+
+        Debug.Log("420 : " + targetposition);
+
+        camera1.transform.localPosition = cameraposition;
+        camera1.transform.localRotation = camerarotation;
+
+        Debug.Log("425 : " + targetposition);
+
+
+      //  MainWeapon.SetActive(true);
 
 
         RightHand.weight = 1.0f;
@@ -354,16 +456,30 @@ public class ReloadAnim : MonoBehaviour
 
         playerrigbuilder.enabled = false; // 리그빌더 초기화
         playerrigbuilder.enabled = true;
+
+        Debug.Log("440 : " + targetposition);
     }
 
     void pistolChange()
     {
-        MainWeapon.SetActive(false);
-        Knife.SetActive(false);
-        grenade.SetActive(false);
+
+        Debug.Log("444 : " + targetposition);
+
+        //MainWeapon.SetActive(false);
+        //Knife.SetActive(false);
+        //grenade.SetActive(false);
+
 
         animator.runtimeAnimatorController = pistolanim;
-        Pistol.SetActive(true);
+
+        Debug.Log("453 : " + targetposition);
+
+        camera1.transform.localPosition = cameraposition;
+        camera1.transform.localRotation = camerarotation;
+
+        Debug.Log("458 : " + targetposition);
+
+        //Pistol.SetActive(true);
 
         RightHand.weight = 1.0f;
         LeftHand.weight = 0.7f;
@@ -374,19 +490,21 @@ public class ReloadAnim : MonoBehaviour
         playerrigbuilder.enabled = false; // 리그빌더 초기화
         playerrigbuilder.enabled = true;
 
-
+        Debug.Log("473 : " + targetposition);
     }
 
 
 
     void knifeChange()
     {
-        MainWeapon.SetActive(false);
-        Pistol.SetActive(false);
-        grenade.SetActive(false);
+        //MainWeapon.SetActive(false);
+        //Pistol.SetActive(false);
+        //grenade.SetActive(false);
 
         animator.runtimeAnimatorController = knifeanim;
-        Knife.SetActive(true);
+        camera1.transform.localPosition = cameraposition;
+        camera1.transform.localRotation = camerarotation;
+        //Knife.SetActive(true);
 
         RightHand.weight = 0f;
         LeftHand.weight = 1f;
@@ -401,18 +519,20 @@ public class ReloadAnim : MonoBehaviour
 
     void grenadeChange()
     {
-        MainWeapon.SetActive(false);
-        Pistol.SetActive(false);
-        Knife.SetActive(false);
+        //MainWeapon.SetActive(false);
+        //Pistol.SetActive(false);
+        //Knife.SetActive(false);
 
         animator.runtimeAnimatorController = grenadeanim;
-        grenade.SetActive(true);
+        camera1.transform.localPosition = cameraposition;
+        camera1.transform.localRotation = camerarotation;
+       //grenade.SetActive(true);
 
         LeftHand.weight = 1f;
         RightHand.weight = 0f;
 
-        LeftHand.data.target = null;
-        RightHand.data.target = GrenadeRightHandTarget;
+        LeftHand.data.target = GrenadeLeftHandTarget;
+        RightHand.data.target = null;
 
         playerrigbuilder.enabled = false; // 리그빌더 초기화
         playerrigbuilder.enabled = true;

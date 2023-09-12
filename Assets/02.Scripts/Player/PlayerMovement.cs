@@ -22,6 +22,8 @@ public class PlayerMovement : LivingEntity, IPunObservable
     Vector3 setPos;
     Quaternion setRot;
 
+    Animator animator;
+
     public PhotonView pv;
 
     private void Awake()
@@ -39,10 +41,22 @@ public class PlayerMovement : LivingEntity, IPunObservable
 
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody>();
+
+        animator = GetComponent<Animator>();
     }
 
     void Update()
     {
+        if(playerInput.h == 0 && playerInput.v == 0)
+        {
+            animator.SetBool("Walk1", false);
+        }
+        else
+        {
+            animator.SetBool("Walk1", true);
+        }
+
+
         if (pv.IsMine)
             Jump();
     }

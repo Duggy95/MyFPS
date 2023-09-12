@@ -16,6 +16,7 @@ public class CameraCtrl : MonoBehaviour, IPunObservable
     float damping = 10;
     Quaternion setAngle;
 
+    public Transform upperchestSpine;
     void Start()
     {
         pv = GetComponent<PhotonView>();
@@ -37,6 +38,8 @@ public class CameraCtrl : MonoBehaviour, IPunObservable
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, setAngle, Time.deltaTime * damping);
         }
+
+        upperchestSpine.localRotation = Quaternion.Euler(0, 0, eulerAngleX);
     }
 
     void FixedUpdate()
