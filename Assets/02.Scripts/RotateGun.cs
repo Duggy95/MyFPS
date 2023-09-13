@@ -29,12 +29,12 @@ public class RotateGun : MonoBehaviour
 
         if (this.gameObject.name == "Sci-Fi Rifle_fbx")
         {
-            transform.Rotate(new Vector3(0, 0, 3));
+            transform.Rotate(new Vector3(0, 0, 1));
 
         }
         else
         {
-            transform.Rotate(new Vector3(0, 3, 0));
+            transform.Rotate(new Vector3(0, 1, 0));
         }
 
            

@@ -297,6 +297,8 @@ public class BuyGun : MonoBehaviour
                     Image aaa = weaponchoose.GetComponent<Image>();
                     aaa.sprite = gunsprites[0];
 
+                    GameManager.instance.EquipGunsprite = gunsprites[0];
+
                     break;
                 }
                 else if (i == 1 && Totalmoney >= 100) //건2
@@ -319,7 +321,7 @@ public class BuyGun : MonoBehaviour
 
                             textobj.SetActive(false);
 
-                            RotateGun rotategun1 = Shopguns[j].GetComponent<RotateGun>();
+                            RotateGun rotategun1 = Shopguns[j].GetComponent<RotateGun>(); 
                             rotategun1.enabled = true;
 
                             Button buttons = Greenimages[j].GetComponent<Button>();
@@ -334,6 +336,8 @@ public class BuyGun : MonoBehaviour
                             image3.color = b;
 
                             image3.color = originColor;
+
+
                             break;
                         }
 
@@ -376,6 +380,8 @@ public class BuyGun : MonoBehaviour
                     Image aaa = weaponchoose.GetComponent<Image>();
                     aaa.sprite = gunsprites[1];
 
+                    GameManager.instance.EquipGunsprite = gunsprites[1];
+
                     break;
 
                 }
@@ -417,6 +423,8 @@ public class BuyGun : MonoBehaviour
                             Image aaaa = weaponchoose.GetComponent<Image>();
                             aaaa.sprite = gunsprites[2];
 
+                            
+
                             break;
                         }
 
@@ -448,6 +456,8 @@ public class BuyGun : MonoBehaviour
                     MoneyText.text = Totalmoney.ToString();
                     Image aaa = weaponchoose.GetComponent<Image>();
                     aaa.sprite = gunsprites[2];
+
+                    GameManager.instance.EquipGunsprite = gunsprites[2];
 
                     break;
                 }
@@ -514,6 +524,8 @@ public class BuyGun : MonoBehaviour
                     Image aaa = weaponchoose.GetComponent<Image>();
                     aaa.sprite = gunsprites[3];
 
+                    GameManager.instance.EquipGunsprite = gunsprites[3];
+
                     break;
                 }
                 else if (i == 4 && Totalmoney >= 200) // camo
@@ -575,6 +587,8 @@ public class BuyGun : MonoBehaviour
                     MoneyText.text = Totalmoney.ToString();
                     Image aaa = weaponchoose.GetComponent<Image>();
                     aaa.sprite = gunsprites[4];
+
+                    GameManager.instance.EquipGunsprite = gunsprites[4];
 
                     break;
                 }
@@ -641,6 +655,8 @@ public class BuyGun : MonoBehaviour
                     Image aaa = weaponchoose.GetComponent<Image>();
                     aaa.sprite = gunsprites[5];
 
+                    GameManager.instance.EquipGunsprite = gunsprites[5];
+
                     break;
                 }
                 else if (i == 6 && Totalmoney >= 50) // 수류탄
@@ -666,9 +682,11 @@ public class BuyGun : MonoBehaviour
                     b = new Color(255, 255, 255, 255);
                     grenadeimage.color = b;
 
+                    GameManager.instance.HasGrenade = true;
+
                     break;
                 }
-                else if (i == 7 && Totalmoney >= 100)
+                else if (i == 7 && Totalmoney >= 100) // 아머
                 {
                     Head.material = HeadArmor;
                     Torso.material = TorsoArmor;
@@ -691,6 +709,8 @@ public class BuyGun : MonoBehaviour
 
                     b = new Color(255, 255, 255, 255);
                     vestImage.color = b;
+
+                    GameManager.instance.HasArmor = true;
 
                     break;
                 }

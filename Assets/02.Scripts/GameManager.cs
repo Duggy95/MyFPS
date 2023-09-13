@@ -3,6 +3,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class GameManager : MonoBehaviour
 
     public string CurrentUserNickName;
     public bool loginSuccess = false;
+
+    public Sprite EquipGunsprite;
+    public bool HasGrenade = false; // 수류탄 상점에서 샀는지 체크
+    public bool HasArmor = false; // 아머 상점에서 샀는지 체크
 
     // 싱글톤 접근용 프로퍼티
     public static GameManager instance        //GmaeManager타입의 변수 instance는 아래 코드대로 M_instance를 반환하는 스태틱 매서드 역할.

@@ -15,8 +15,8 @@ public class ReloadAnim : MonoBehaviour
     public TwoBoneIKConstraint RightHand;
     public TwoBoneIKConstraint LeftHand;
 
-    public Transform MainLeftHandtarget;
-    public Transform MainRightHandtarget;
+    public Transform[] MainLeftHandtarget = new Transform[6];
+    public Transform[] MainRightHandtarget = new Transform[6];
 
     public Transform PistolLeftHandTarget;
     public Transform pistolRightHandTarget;
@@ -96,8 +96,8 @@ public class ReloadAnim : MonoBehaviour
         RightHand.weight = 1.0f;
         LeftHand.weight = 1.0f;
 
-        LeftHand.data.target = MainLeftHandtarget;
-        RightHand.data.target = MainRightHandtarget;
+        LeftHand.data.target = MainLeftHandtarget[0];
+        RightHand.data.target = MainRightHandtarget[0];
 
         playerrigbuilder.enabled = false; // 리그빌더 초기화
         playerrigbuilder.enabled = true;
@@ -451,8 +451,8 @@ public class ReloadAnim : MonoBehaviour
         RightHand.weight = 1.0f;
         LeftHand.weight = 1.0f;
 
-        LeftHand.data.target = MainLeftHandtarget;
-        RightHand.data.target = MainRightHandtarget;
+        LeftHand.data.target = MainLeftHandtarget[0];
+        RightHand.data.target = MainRightHandtarget[0];
 
         playerrigbuilder.enabled = false; // 리그빌더 초기화
         playerrigbuilder.enabled = true;
@@ -559,7 +559,7 @@ public class ReloadAnim : MonoBehaviour
 
         if (MainWeapon.activeSelf)
         {
-            LeftHand.data.target = MainLeftHandtarget;
+            LeftHand.data.target = MainLeftHandtarget[0];
             LeftHand.weight = 1.0f;
             mainreload = false;
         }
