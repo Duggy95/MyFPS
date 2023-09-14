@@ -26,7 +26,7 @@ public class WeaponCtrl : MonoBehaviourPun
         }
 
         Setting();  //초기 무기값 세팅.
-        SwitchWeapon(0);  //보조무기 활성화.
+        SwitchWeapon(1);  //보조무기 활성화.
     }
 
     // Update is called once per frame
@@ -35,58 +35,24 @@ public class WeaponCtrl : MonoBehaviourPun
         if (playerInput.mainGun)
         {
             Switch(0);
-            SwichRPC(0);
-            Debug.Log("1번 누름");
         }
         else if (playerInput.subGun)
         {
             Switch(1);
-            SwichRPC(1);
-            Debug.Log("2번 누름");
         }
         else if (playerInput.knife)
         {
             Switch(2);
-            SwichRPC(2);
-            Debug.Log("3번 누름");
         }
         else if (playerInput.grenade)
         {
             Switch(3);
-            SwichRPC(3);
-            Debug.Log("4번 누름");
         }
-       
     }
 
     public void Switch(int i)
     {
         photonView.RPC("SwichRPC", RpcTarget.All, i);
-        /*if (!photonView.IsMine)
-        {
-            return;
-        }
-
-        switch (i)  //플레이어 입력을 받아서 
-        {
-            //받은 입력에 따라 무기를 바꿈.
-            case 0:
-                SwitchWeapon(0);
-                //pv.RPC("SwitchWeapon", RpcTarget.Others, 0);
-                break;
-            case 1:
-                SwitchWeapon(1);
-                //pv.RPC("SwitchWeapon", RpcTarget.Others, 1);
-                break;
-            case 2:
-                SwitchWeapon(2);
-                //pv.RPC("SwitchWeapon", RpcTarget.Others, 2);
-                break;
-            case 3:
-                SwitchWeapon(3);
-                //pv.RPC("SwitchWeapon", RpcTarget.Others, 3);
-                break;
-        }*/
     }
 
     [PunRPC]

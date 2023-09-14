@@ -155,6 +155,7 @@ MonoBehaviour:
   reloadTime: 0
   timeBetFire: 0
   damage: 100
+  recoilY: 0
   firePos: {fileID: 0}
   anim: {fileID: 0}
   muzzleFlash: {fileID: 0}

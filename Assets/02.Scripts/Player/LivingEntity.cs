@@ -6,6 +6,7 @@ using Photon.Realtime;
 
 public class LivingEntity : MonoBehaviourPun, IDamageable
 {
+    Transform myTr;
     public float startingHealth = 100;
     public float health;
     public bool dead = false;
@@ -13,7 +14,7 @@ public class LivingEntity : MonoBehaviourPun, IDamageable
 
     void Start()
     {
-
+        myTr = transform;
     }
 
     [PunRPC]
@@ -32,7 +33,17 @@ public class LivingEntity : MonoBehaviourPun, IDamageable
     [PunRPC]
     void IDamageable.OnDamage(float damage, Vector3 hitPoint, Vector3 hitNormal)  //데미지 입는 메서드.
     {
-        health -= damage;
+        Vector3 localHitPoint = transform.InverseTransformPoint(hitPoint);  //맞은 위치를 플레이어의 로컬위치로 변환
+
+        if (localHitPoint.y >= 0.6f)  //높이가 0.6이상일 때 헤드샷으로 간주.
+        {
+            print("헤드샷!!");
+            health -= damage * 2;
+        }
+        else
+        {
+            health -= damage;
+        }
 
         photonView.RPC("ApplyUpdateHealth", RpcTarget.Others, health, dead);
         //photonView.RPC("OnDamage", RpcTarget.Others, damage, hitPoint, hitNormal);
@@ -40,10 +51,7 @@ public class LivingEntity : MonoBehaviourPun, IDamageable
         if (health <= 0)
         {
             print("사망");
-            //photonView.TransferOwnership(PhotonNetwork.MasterClient);
-            //photonView.RPC("Die", RpcTarget.All);
             photonView.RPC("Die", RpcTarget.All);
-            //StartCoroutine(PlayerDie());
         }
     }
 
@@ -54,7 +62,7 @@ public class LivingEntity : MonoBehaviourPun, IDamageable
 
         photonView.RPC("ApplyUpdateHealth", RpcTarget.Others, health, dead);
 
-        if(health <= 0)
+        if (health <= 0)
         {
             print("사망");
             StartCoroutine(PlayerDie());
@@ -68,7 +76,7 @@ public class LivingEntity : MonoBehaviourPun, IDamageable
             OnMelee(meleeDamage);
         }
 
-        if(other.gameObject.CompareTag("GUN"))  //총 오브젝트를 주울 때
+        if (other.gameObject.CompareTag("GUN"))  //총 오브젝트를 주울 때
         {
             //주운 오브젝트에서 정보뽑고, 오브젝트 삭제.
             Weapon weapon = other.gameObject.GetComponent<Weapon>();

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static Unity.VisualScripting.Member;
 using static UnityEngine.GraphicsBuffer;
 
 public class FireCtrl : MonoBehaviourPun, IPunObservable
@@ -21,6 +22,7 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
     public Image crossHair;  //크로스헤어
     public GameObject explodePrefab;  //폭발 프리팹
     public GameObject bulletEff;  //총알 자국
+    public GameObject bloodEff;  //피 효과
     public Weapon weapon;  //현재 무기
     public CameraCtrl cameraCtrl;
 
@@ -31,6 +33,7 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
     PlayerInput playerInput;  //입력
     Color originColor;  //크로스헤어 색
     Vector3 throwDirection = new Vector3(0, 0.5f, 0);  //던지는 방향
+    Vector3 grenadePosition;
     float lastFireTime;  //마지막 발사
     int ammoToFill;  //채워야 할 총알 수
     //Transform throwPosition;
@@ -39,7 +42,9 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
     float maxPower = 20;
     float chargeTime = 0;
     bool isCharge = false;
-    float explosionRadius = 5;  //수류탄 범위
+
+    float headHeight = 2;
+
 
     void Awake()
     {
@@ -68,40 +73,47 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
             return;
         }
 
-        if (playerInput.fire)
+        if (state == State.Ready && Time.time >= lastFireTime + weapon.timeBetFire)
         {
-            if (state == State.Ready && Time.time >= lastFireTime + weapon.timeBetFire)  //발사가능 상태일 때
+            if (weapon.weaponType <= 1)
             {
-                if (weapon.weaponType <= 1)  //현재무기가 주 무기, 보조 무기일 때
+
+                if (playerInput.fire)
                 {
                     lastFireTime = Time.time;  //마지막 발사 시간 초기화
                     pv.RPC("FireRPC", RpcTarget.All);  //총 발사
                 }
-                else if (weapon.weaponType == 2)  //현재무기가 근접 무기일 때
+            }
+
+            if (weapon.weaponType == 2)  //현재 무기가 근접무기일 때
+            {
+                lastFireTime = Time.time;
+                Melee();  //근접 공격
+            }
+
+            if (weapon.weaponType == 3)  //현재 무기가 수류탄일 때
+            {
+                if (playerInput.fireDown)
                 {
-                    lastFireTime = Time.time;  //마지막 발사 시간 초기화
-                    Melee();  //근접 공격
+                    //수류탄 뽑기
+                    PullOutPin();
+                }
+                if (playerInput.fire)
+                {
+                    //뽑고 대기
+                    ChargeThrow();
+                }
+                if (playerInput.fireUp)
+                {
+                    //수류탄 던지기
+                    ReleaseThrow();
                 }
             }
         }
 
-        if (weapon.weaponType == 3)  //현재 무기가 수류탄일 때
+        if (playerInput.fireUp)
         {
-            if (playerInput.fireDown)
-            {
-                //수류탄 뽑기
-                PullOutPin();
-            }
-            if (playerInput.fire)
-            {
-                //뽑고 대기
-                ChargeThrow();
-            }
-            if (playerInput.fireUp)
-            {
-                //수류탄 던지기
-                ReleaseThrow();
-            }
+            OriginCrossHair();  //크로스헤어 색깔 복구
         }
 
         if (state != State.Reloading && weapon.ammoRemain > 0 &&
@@ -147,13 +159,22 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
             if (target != null)  //가져오는데 성공하면 데미지 받는 함수 호출하고, 크로스헤어 색깔 바꾸기.
             {
                 target.OnDamage(weapon.damage, hitInfo.point, hitInfo.normal);
-                StartCoroutine(ChangeColor());
+                Quaternion rot = Quaternion.FromToRotation(Vector3.forward, hitInfo.normal);
+                GameObject blood = Instantiate(bloodEff, hitInfo.point, rot);  //피 효과 생성.
+                RedCrossHair();  //크로스헤어 빨간색으로 바꾸기
+            }
+            else  //플레이어가 아닌 것을 쐈을 때
+            {
+                OriginCrossHair();  //크로스헤어 색 복구
+                Quaternion rot = Quaternion.FromToRotation(Vector3.forward, hitInfo.normal);
+                GameObject bulletMark = Instantiate(bulletEff, hitInfo.point, rot);  //총알 자국 생성.
             }
             hitPosition = hitInfo.point;  //맞은 위치 저장.
         }
         else  //레이에 아무것도 안 맞았으면, 사격거리 끝을 맞은 위치로.
         {
             hitPosition = weapon.firePos.position + weapon.firePos.forward * weapon.fireDistance;
+            OriginCrossHair();  //크로스헤어 색 복구
         }
 
         weapon.magAmmo--;
@@ -164,8 +185,6 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
 
         StartCoroutine(ShotEff(hitPosition));
         //photonView.RPC("ShotEffRPC", RpcTarget.All, hitPosition);  //발사 효과
-        Quaternion rot = Quaternion.FromToRotation(Vector3.forward, hitInfo.normal);
-        GameObject bulletMark = Instantiate(bulletEff, hitPosition, rot);
         Recoil();
     }
 
@@ -213,11 +232,16 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
         state = State.Ready;  //발사 가능 상태.
     }
 
-    IEnumerator ChangeColor()  //크로스헤어 색깔 바꾸기.
+    void RedCrossHair()  //크로스헤어 색깔 바꾸기.
     {
         crossHair.color = Color.red;
 
-        yield return new WaitForSeconds(0.1f);
+        /*yield return new WaitForSeconds(0.1f);
+        crossHair.color = originColor;*/
+    }
+
+    void OriginCrossHair()
+    {
         crossHair.color = originColor;
     }
 
@@ -259,11 +283,11 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
 
     void ReleaseThrow()  //던지기.
     {
-        weapon.magAmmo--;
+        //weapon.magAmmo--;
         ThrowGrenade(Mathf.Min(throwPower, maxPower));
         isCharge = false;
 
-        weaponCtrl.RemoveWeapon(weapon);
+        //weaponCtrl.RemoveWeapon(weapon);
 
         //라인 숨기기.
         //grenadeLine.enabled = false;
@@ -274,62 +298,9 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
         Vector3 spawnPosition = weapon.firePos.position + Camera.main.transform.forward;
 
         GameObject grenade = PhotonNetwork.Instantiate("Grenade", spawnPosition, Camera.main.transform.rotation);
-
+        Weapon grenadeWeapon = grenade.GetComponent<Weapon>();
         Rigidbody rb = grenade.gameObject.GetComponent<Rigidbody>();
-        Vector3 finalThrowDirection = (Camera.main.transform.forward + throwDirection).normalized;
-        rb.AddForce(finalThrowDirection * force, ForceMode.VelocityChange);
-        StartCoroutine(Explosion(grenade.transform, grenade.gameObject));
-    }
-
-    IEnumerator Explosion(Transform transform, GameObject grenade)  //폭발 효과. 2초뒤에 폭발효과 생성.
-    {
-        yield return new WaitForSeconds(2);
-        GameObject explodeEff = Instantiate(explodePrefab, transform.position, Quaternion.identity);
-        Destroy(explodeEff, 2);
-        Destroy(grenade);
-        NearByApply(grenade.transform);
-    }
-
-    void NearByApply(Transform transform)
-    {
-        //폭발 반경 범위 안에서 콜라이더 감지.
-        Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
-        foreach (Collider collider in colliders)
-        {
-            RaycastHit hit;
-            //폭발 위치에서 콜라이더 까지의 방향.
-            Vector3 direction = (collider.transform.position - transform.position).normalized;
-            //폭발 위치에서 콜라이더 까지의 거리.
-            float distance = Vector3.Distance(transform.position, collider.transform.position);
-
-            if (Physics.Raycast(transform.position, direction, out hit, explosionRadius))
-            {
-                IDamageable target = hit.collider.GetComponent<IDamageable>();
-
-                if (target != null)
-                {
-                    //거리가 가까운 비율에 따라 데미지가 차등.
-                    if (distance < explosionRadius * 0.2)
-                    {
-                        weapon.damage = 100;
-                    }
-                    else if (distance < explosionRadius * 0.4)
-                    {
-                        weapon.damage = 40;
-                    }
-                    else if (distance < explosionRadius)
-                    {
-                        weapon.damage = 20;
-                    }
-                    else
-                    {
-                        weapon.damage = 0;
-                    }
-
-                    target.OnDamage(weapon.damage, hit.point, hit.normal);
-                }
-            }
-        }
+        grenadeWeapon.ShareInfo(weapon);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
