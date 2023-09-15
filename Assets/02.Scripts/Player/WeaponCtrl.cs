@@ -10,15 +10,19 @@ public class WeaponCtrl : MonoBehaviourPun
     public Transform[] poses = new Transform[4];  //내가 무기를 가져야 할 위치들. 0 = 주무기, 1 = 보조무기, 2 = 나이프, 3 = 수류탄
     PlayerInput playerInput;  //플레이어 입력
     FireCtrl fireCtrl;  //플레이어가 가지고 있는 발사기능
+    PhotonView pv;  //포톤뷰
     public TestPhoton testPhoton;
     public Weapon currWeapon;  //현재 무기
     Vector3 throwDirection = new Vector3(0, 1, 0);  //던지는 방향
+    Vector3 spawnPosition;
+    Vector3 spawnRotation;
 
     // Start is called before the first frame update
     void Start()
     {
         playerInput = GetComponent<PlayerInput>();
         fireCtrl = GetComponent<FireCtrl>();
+        pv = GetComponent<PhotonView>();
         for (int i = 0; i < poses.Length; i++)
         {
             //무기 위치들의 자식에 무기로부터 무기가져와서 배열에 넣어줌. 무기를 안들고 있으면 null값 들어갈 것임.
@@ -48,11 +52,18 @@ public class WeaponCtrl : MonoBehaviourPun
         {
             Switch(3);
         }
+
+        if (playerInput.throwGun)  //총 던지기
+        {
+            //총 던지고, 들고 있는거 삭제.
+            pv.RPC("ThrowWeaponRPC", RpcTarget.All);
+            pv.RPC("RemoveWeaponRPC", RpcTarget.All);
+        }
     }
 
     public void Switch(int i)
     {
-        photonView.RPC("SwichRPC", RpcTarget.All, i);
+        pv.RPC("SwichRPC", RpcTarget.All, i);
     }
 
     [PunRPC]
@@ -179,6 +190,12 @@ public class WeaponCtrl : MonoBehaviourPun
         SwitchWeapon(_weapon.weaponType);
     }
 
+    [PunRPC]
+    void RemoveWeaponRPC()
+    {
+        RemoveWeapon(currWeapon);
+    }
+
     public void RemoveWeapon(Weapon weapon)  //무기를 지우는 메서드.
     {
         if (weapon.weaponType == 0 || weapon.weaponType == 3)  //주 무기, 수류탄에만 씀.
@@ -193,26 +210,34 @@ public class WeaponCtrl : MonoBehaviourPun
             return;
     }
 
+    [PunRPC]
+    void ThrowWeaponRPC()
+    {
+        ThrowWeapon(currWeapon);
+    }
+
     public void ThrowWeapon(Weapon weapon)  //무기 던지기.(버리기)
     {
         if (weapon.weaponType != 0)  //주 무기만 가능.
             return;
 
-        //생성 위치와 회전값
-        Vector3 spawnPosition = weapon.transform.position + Camera.main.transform.forward;
-        Vector3 spawnRotation = fireCtrl.transform.rotation.eulerAngles + new Vector3(0, -90, -90);
-
+        if (photonView.IsMine)
+        {
+            //생성 위치와 회전값.
+            spawnPosition = weapon.transform.position + fireCtrl.transform.forward;
+            spawnRotation = fireCtrl.transform.rotation.eulerAngles + new Vector3(0, -90, -90);
+        }
+        else
+        {
+            //생성 위치와 회전값.
+            spawnPosition = weapon.transform.position + weapon.transform.forward;
+            spawnRotation = weapon.transform.rotation.eulerAngles + new Vector3(0, -90, -90);
+        }
         //던지기 전용 오브젝트 생성. 
         GameObject _weaponDrop = PhotonNetwork.Instantiate(weapon.weaponName + "_Drop", spawnPosition, Quaternion.Euler(spawnRotation));
         //현재 무기의 정보를 던진 무기에 전해줌.
         Weapon _weapon = _weaponDrop.GetComponent<Weapon>();
         _weapon.anim.enabled = false;
         _weapon.ShareInfo(weapon);
-
-        //리지드바디를 추가해서 앞으로 날림.
-        Rigidbody rb = _weapon.gameObject.AddComponent<Rigidbody>();
-        rb.constraints = RigidbodyConstraints.FreezeRotation;
-        Vector3 ThrowDirection = (Camera.main.transform.forward + throwDirection).normalized;
-        rb.AddForce(ThrowDirection * 3, ForceMode.VelocityChange);
     }
 }

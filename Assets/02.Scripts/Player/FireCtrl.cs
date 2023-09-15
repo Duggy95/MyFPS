@@ -122,13 +122,6 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
             if (playerInput.reload)
                 StartCoroutine(Reload());  //장전 코루틴 호출
         }
-
-        if (playerInput.throwGun)  //총 던지기
-        {
-            //총 던지고, 들고 있는거 삭제.
-            weaponCtrl.ThrowWeapon(weapon);
-            weaponCtrl.RemoveWeapon(weapon);
-        }
     }
 
     [PunRPC]
@@ -299,7 +292,6 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
 
         GameObject grenade = PhotonNetwork.Instantiate("Grenade", spawnPosition, Camera.main.transform.rotation);
         Weapon grenadeWeapon = grenade.GetComponent<Weapon>();
-        Rigidbody rb = grenade.gameObject.GetComponent<Rigidbody>();
         grenadeWeapon.ShareInfo(weapon);
     }
 

@@ -1,6 +1,7 @@
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : LivingEntity, IPunObservable
@@ -18,11 +19,10 @@ public class PlayerMovement : LivingEntity, IPunObservable
     bool isGround;
     PlayerInput playerInput;
     Rigidbody rb;
+    WeaponCtrl weaponCtrl;
 
     Vector3 setPos;
     Quaternion setRot;
-
-    Animator animator;
 
     public PhotonView pv;
 
@@ -41,22 +41,11 @@ public class PlayerMovement : LivingEntity, IPunObservable
 
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody>();
-
-        animator = GetComponent<Animator>();
+        weaponCtrl = GetComponent<WeaponCtrl>();
     }
 
     void Update()
     {
-        if(playerInput.h == 0 && playerInput.v == 0)
-        {
-            animator.SetBool("Walk1", false);
-        }
-        else
-        {
-            animator.SetBool("Walk1", true);
-        }
-
-
         if (pv.IsMine)
             Jump();
     }
@@ -97,6 +86,18 @@ public class PlayerMovement : LivingEntity, IPunObservable
     public void SetGround(bool ground)
     {
         isGround = ground;
+    }
+
+    protected override void OnTriggerEnter(Collider other)
+    {
+        base.OnTriggerEnter(other);
+        if (other.gameObject.CompareTag("GUN"))  //총 오브젝트를 주울 때
+        {
+            //주운 오브젝트에서 정보뽑고, 오브젝트 삭제.
+            Weapon weapon = other.gameObject.GetComponent<Weapon>();
+            weaponCtrl.GetWeapon(weapon);
+            Destroy(other.gameObject, 0.01f);
+        }
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

@@ -260,6 +260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mouseSensitivity: 2
+  upperchestSpine: {fileID: 0}
 --- !u!1 &7771218908077651510
 GameObject:
   m_ObjectHideFlags: 0
@@ -414,6 +415,7 @@ MonoBehaviour:
   crossHair: {fileID: 0}
   explodePrefab: {fileID: 1000013462590818, guid: ecdd96beb7f93494880c052dfccf9dc1, type: 3}
   bulletEff: {fileID: 1000010355441670, guid: 02a509a7fa70ed740ba4197e20c5d32d, type: 3}
+  bloodEff: {fileID: 1000012909287652, guid: 46ce9411c62f5274f99954097b9c73a3, type: 3}
   weapon: {fileID: 0}
   cameraCtrl: {fileID: 7614032437743225744}
   lineRenderer: {fileID: 0}
