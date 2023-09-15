@@ -48,19 +48,16 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
 
     void Awake()
     {
-        if(pv.IsMine)
-        {
-            playerInput = GetComponent<PlayerInput>();
-            lineRenderer = GetComponent<LineRenderer>();
-            //grenadeLine = grenadeWeapon.GetComponentInChildren<LineRenderer>();
-            //throwPosition = grenadeWeapon.GetComponentInChildren<Transform>();
-            weapon = GetComponentInChildren<Weapon>();
-            crossHair = GameObject.FindWithTag("CROSSHAIR").GetComponent<Image>();
-            weaponCtrl = GetComponent<WeaponCtrl>();
-            originColor = crossHair.color;  //크로스헤어 원래 색 저장.
-            lineRenderer.positionCount = 2;
-            lineRenderer.enabled = false;
-        }
+        playerInput = GetComponent<PlayerInput>();
+        lineRenderer = GetComponent<LineRenderer>();
+        //grenadeLine = grenadeWeapon.GetComponentInChildren<LineRenderer>();
+        //throwPosition = grenadeWeapon.GetComponentInChildren<Transform>();
+        weapon = GetComponentInChildren<Weapon>();
+        crossHair = GameObject.FindWithTag("CROSSHAIR").GetComponent<Image>();
+        weaponCtrl = GetComponent<WeaponCtrl>();
+        originColor = crossHair.color;  //크로스헤어 원래 색 저장.
+        lineRenderer.positionCount = 2;
+        lineRenderer.enabled = false;
     }
 
     void OnEnable()  //생성되었을 때 초기화.

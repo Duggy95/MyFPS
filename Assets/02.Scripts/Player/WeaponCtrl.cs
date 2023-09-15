@@ -20,8 +20,6 @@ public class WeaponCtrl : MonoBehaviourPun
     // Start is called before the first frame update
     void Start()
     {
-        if(pv.IsMine)
-        {
             playerInput = GetComponent<PlayerInput>();
             fireCtrl = GetComponent<FireCtrl>();
             pv = GetComponent<PhotonView>();
@@ -33,7 +31,6 @@ public class WeaponCtrl : MonoBehaviourPun
 
             Setting();  //초기 무기값 세팅.
             SwitchWeapon(1);  //보조무기 활성화.
-        }
     }
 
     // Update is called once per frame

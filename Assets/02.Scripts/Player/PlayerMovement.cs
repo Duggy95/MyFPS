@@ -38,12 +38,9 @@ public class PlayerMovement : LivingEntity, IPunObservable
         {
             Destroy(GetComponentInChildren<Camera>().gameObject);
         }
-        else
-        {
             playerInput = GetComponent<PlayerInput>();
             rb = GetComponent<Rigidbody>();
             weaponCtrl = GetComponent<WeaponCtrl>();
-        }
     }
 
     void Update()
