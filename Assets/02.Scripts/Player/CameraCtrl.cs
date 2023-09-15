@@ -19,9 +19,12 @@ public class CameraCtrl : MonoBehaviour, IPunObservable
     public Transform upperchestSpine;
     void Start()
     {
-        pv = GetComponent<PhotonView>();
-        player = GetComponentInParent<PlayerMovement>();
-        playerInput = GetComponentInParent<PlayerInput>();
+        if(pv.IsMine)
+        {
+            pv = GetComponent<PhotonView>();
+            player = GetComponentInParent<PlayerMovement>();
+            playerInput = GetComponentInParent<PlayerInput>();
+        }
     }
 
     void LateUpdate()
