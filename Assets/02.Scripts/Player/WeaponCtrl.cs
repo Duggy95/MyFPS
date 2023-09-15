@@ -20,17 +20,20 @@ public class WeaponCtrl : MonoBehaviourPun
     // Start is called before the first frame update
     void Start()
     {
-        playerInput = GetComponent<PlayerInput>();
-        fireCtrl = GetComponent<FireCtrl>();
-        pv = GetComponent<PhotonView>();
-        for (int i = 0; i < poses.Length; i++)
+        if(pv.IsMine)
         {
-            //무기 위치들의 자식에 무기로부터 무기가져와서 배열에 넣어줌. 무기를 안들고 있으면 null값 들어갈 것임.
-            weapons[i] = poses[i].GetComponentInChildren<Weapon>();
-        }
+            playerInput = GetComponent<PlayerInput>();
+            fireCtrl = GetComponent<FireCtrl>();
+            pv = GetComponent<PhotonView>();
+            for (int i = 0; i < poses.Length; i++)
+            {
+                //무기 위치들의 자식에 무기로부터 무기가져와서 배열에 넣어줌. 무기를 안들고 있으면 null값 들어갈 것임.
+                weapons[i] = poses[i].GetComponentInChildren<Weapon>();
+            }
 
-        Setting();  //초기 무기값 세팅.
-        SwitchWeapon(1);  //보조무기 활성화.
+            Setting();  //초기 무기값 세팅.
+            SwitchWeapon(1);  //보조무기 활성화.
+        }
     }
 
     // Update is called once per frame
