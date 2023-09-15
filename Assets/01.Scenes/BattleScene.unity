@@ -15664,6 +15664,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 19d248a9f6ca93f408d21cd2434fb0de, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53d11eac910bd4848969bc8706c20a69, type: 3}
+--- !u!1 &496761315 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3099736993068257032, guid: 53d11eac910bd4848969bc8706c20a69, type: 3}
+  m_PrefabInstance: {fileID: 496761314}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &497267088
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21982,6 +21987,19 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2116449415558233371, guid: 53d11eac910bd4848969bc8706c20a69, type: 3}
   m_PrefabInstance: {fileID: 496761314}
   m_PrefabAsset: {fileID: 0}
+--- !u!65 &668379479
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 496761315}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.000002, y: 6.0040517, z: 2.1166217}
+  m_Center: {x: 0.000007918965, y: 3.0020258, z: -0.954271}
 --- !u!1001 &668573430
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30758,6 +30776,24 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 716530909894556470, guid: 6ea50ab1a59ec5248bfccf0845e62cf6, type: 3}
   m_PrefabInstance: {fileID: 895970425}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &895970427 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4587752708798990629, guid: 6ea50ab1a59ec5248bfccf0845e62cf6, type: 3}
+  m_PrefabInstance: {fileID: 895970425}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &895970428
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895970427}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.0000007, y: 0.15316917, z: 2.0000017}
+  m_Center: {x: 0.0000038146973, y: -0.048416026, z: 0.00000047683704}
 --- !u!1001 &896728657
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38462,6 +38498,24 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 19d248a9f6ca93f408d21cd2434fb0de, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53d11eac910bd4848969bc8706c20a69, type: 3}
+--- !u!1 &1091324505 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3099736993068257032, guid: 53d11eac910bd4848969bc8706c20a69, type: 3}
+  m_PrefabInstance: {fileID: 1091324504}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1091324506
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1091324505}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.000001, y: 5.993076, z: 1.9017497}
+  m_Center: {x: -0.0000026789508, y: 2.9965384, z: -0.8468532}
 --- !u!1001 &1092871723
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -75436,6 +75490,24 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 19d248a9f6ca93f408d21cd2434fb0de, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53d11eac910bd4848969bc8706c20a69, type: 3}
+--- !u!1 &2133092355 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3099736993068257032, guid: 53d11eac910bd4848969bc8706c20a69, type: 3}
+  m_PrefabInstance: {fileID: 2133092354}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &2133092356
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133092355}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.0000005, y: 5.921238, z: 1.960635}
+  m_Center: {x: 8.456347e-11, y: 2.9775777, z: -0.87633854}
 --- !u!4 &2133812075 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 136510038073664046, guid: 3dffe1a95f5fbae4c95f64e8e5f3ff26, type: 3}

@@ -27,12 +27,10 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
     public CameraCtrl cameraCtrl;
 
     Ray ray;
-    WeaponCtrl weaponCtrl;  //웨폰컨트롤러
     public LineRenderer lineRenderer;  //라인렌더러
     LineRenderer grenadeLine;
     PlayerInput playerInput;  //입력
     Color originColor;  //크로스헤어 색
-    Vector3 throwDirection = new Vector3(0, 0.5f, 0);  //던지는 방향
     Vector3 grenadePosition;
     float lastFireTime;  //마지막 발사
     int ammoToFill;  //채워야 할 총알 수
@@ -54,7 +52,6 @@ public class FireCtrl : MonoBehaviourPun, IPunObservable
         //throwPosition = grenadeWeapon.GetComponentInChildren<Transform>();
         weapon = GetComponentInChildren<Weapon>();
         crossHair = GameObject.FindWithTag("CROSSHAIR").GetComponent<Image>();
-        weaponCtrl = GetComponent<WeaponCtrl>();
         originColor = crossHair.color;  //크로스헤어 원래 색 저장.
         lineRenderer.positionCount = 2;
         lineRenderer.enabled = false;
